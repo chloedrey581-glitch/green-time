@@ -1,0 +1,4228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green Time - Mindful Moments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #a8d5a8;
+            --color-secondary: #f5c5d0;
+            --color-accent-1: #e8c8d8;
+            --color-accent-2: #b8e0b8;
+            --color-accent-3: #f0d5e0;
+            --color-bg-light: #f9f6f4;
+            --color-text-dark: #3d4337;
+            --color-text-light: #8a8a85;
+            --color-border: #e8ddd8;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Trebuchet MS', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f9f6f4 0%, #f5ebe5 100%);
+            min-height: 100vh;
+            color: var(--color-text-dark);
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-header {
+            background: white;
+            border-bottom: 2px solid var(--color-border);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: transparent;
+        }
+
+        .logo svg { width: 44px; height: 44px; display: block; }
+
+        .header-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .header-title p {
+            color: var(--color-text-light);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .app-main {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .session-card {
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+            border: 2px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .session-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .session-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            opacity: 0.8;
+        }
+
+        .session-icon img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .session-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .session-card p {
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            margin: 0;
+        }
+
+        /* Session specific colors */
+        .session-focus { background-color: rgba(168, 213, 168, 0.15); }
+        .session-focus .session-icon { background-color: rgba(168, 213, 168, 0.3); color: #a8d5a8; }
+
+        .session-break { background-color: rgba(184, 224, 184, 0.15); }
+        .session-break .session-icon { background-color: rgba(184, 224, 184, 0.3); color: #b8e0b8; }
+
+        .session-meditation { background-color: rgba(245, 197, 208, 0.15); }
+        .session-meditation .session-icon { background-color: rgba(245, 197, 208, 0.3); color: #f5c5d0; }
+
+        .session-sleep { background-color: rgba(232, 200, 216, 0.15); }
+        .session-sleep .session-icon { background-color: rgba(232, 200, 216, 0.3); color: #e8c8d8; }
+
+        .session-breathing { background-color: rgba(184, 224, 184, 0.15); }
+        .session-breathing .session-icon { background-color: rgba(184, 224, 184, 0.3); color: #b8e0b8; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .modal-icon img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .modal-header p {
+            color: var(--color-text-light);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .timer-display {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .timer-background {
+            fill: none;
+            stroke: var(--color-border);
+            stroke-width: 3;
+        }
+
+        .timer-progress {
+              fill: none;
+              stroke: var(--color-primary);
+              stroke-width: 8;
+              stroke-dasharray: 339.29;
+              stroke-linecap: round;
+              transition: stroke-dashoffset 0.6s linear, stroke 0.3s ease;
+              filter: drop-shadow(0 6px 12px rgba(168,213,168,0.12));
+        }
+
+        .timer-time {
+              font-size: 2.6rem;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+              font-weight: 600;
+              letter-spacing: 1px;
+              color: var(--color-text-dark);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .timer-btn {
+              padding: 0.65rem 1rem;
+              border-radius: 12px;
+              border: none;
+              background: var(--color-primary);
+              color: white;
+              font-size: 1rem;
+              cursor: pointer;
+              box-shadow: 0 8px 20px rgba(168, 213, 168, 0.12);
+              font-weight: 600;
+              min-width: 72px;
+        }
+
+        .timer-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 24px rgba(168, 213, 168, 0.4);
+        }
+
+        .timer-btn.secondary {
+            background: white;
+            color: var(--color-text-light);
+        }
+
+        .timer-btn.secondary:hover {
+            background: rgba(212, 165, 255, 0.1);
+            color: var(--color-primary);
+        }
+
+        .breathing-circle {
+            width: 150px;
+            height: 150px;
+            margin: 2rem auto;
+            border-radius: 50%;
+            background: var(--color-secondary);
+            transition: transform 1s ease-in-out;
+            box-shadow: 0 8px 24px rgba(245, 197, 208, 0.3);
+        }
+
+        .breathing-text {
+            text-align: center;
+            font-size: 1.1rem;
+            margin: 1rem 0;
+            color: var(--color-text-dark);
+            min-height: 30px;
+        }
+
+        .breathing-phase {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--color-text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-tracker {
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .progress-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .progress-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, rgba(168, 213, 168, 0.08) 0%, rgba(245, 197, 208, 0.08) 100%);
+            border-radius: 16px;
+            border: 1px solid var(--color-border);
+        }
+
+        .progress-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: white;
+            color: var(--color-text-dark);
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(212, 165, 255, 0.1);
+            color: var(--color-primary);
+            transform: translateX(-4px);
+        }
+
+        .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--color-text-light);
+        }
+
+        .app-footer {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: var(--color-text-light);
+            font-size: 0.95rem;
+            border-top: 2px solid var(--color-border);
+            background: white;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .header-title { gap: 1rem; }
+            .header-title h1 { font-size: 1.4rem; }
+            .sessions-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .modal-content { padding: 1.5rem; }
+            .timer-time { font-size: 2.5rem; }
+            .timer-display { width: 140px; height: 140px; }
+        }
+
+        @media (max-width: 480px) {
+            .app-header { padding: 1rem; }
+            .sessions-grid { grid-template-columns: 1fr; }
+            .session-card { padding: 1.5rem 1rem; }
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .nav-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-header button {
+            padding: 0.6rem 1.2rem;
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--color-text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .nav-header button:hover {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .nav-header button.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .exercises-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .exercise-card {
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .exercise-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .exercise-icon svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        .exercise-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .exercise-card p {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 640px) {
+            .exercises-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+
+            .exercise-card {
+                padding: 1.2rem;
+            }
+
+            .exercise-icon svg {
+                width: 40px;
+                height: 40px;
+            }
+
+            .exercise-card h3 {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Guided Script Animation */
+        .guided-script {
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .script-text {
+            font-size: 1.8rem;
+            line-height: 1.8;
+            color: var(--color-primary);
+            font-weight: 300;
+            max-width: 600px;
+            opacity: 0;
+            animation: fadeInOut 4s ease-in-out forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Progress Bar Animation */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: var(--color-border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent-2));
+            border-radius: 3px;
+            width: 0%;
+            animation: progress linear forwards;
+        }
+
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        /* Background Animations */
+        @keyframes backgroundShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animated-bg {
+            background: linear-gradient(-45deg, #f9f6f4, #f5ebe5, #f0d5e0, #e8f0e8);
+            background-size: 400% 400%;
+            animation: backgroundShift 15s ease infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Mood Selector */
+        .mood-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .mood-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--color-text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .emoji-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            justify-content: space-between;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+        }
+
+        .emoji-slider {
+            flex: 1;
+            height: 60px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .emoji-slider input {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #f5c5d0 0%, #a8d5a8 100%);
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .emoji-slider input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .emoji-slider input::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .mood-display {
+            text-align: center;
+            font-size: 6rem;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mood-text {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--color-text-light);
+            margin-top: 1rem;
+        }
+
+        .mood-suggestion {
+            background: linear-gradient(135deg, rgba(168, 213, 168, 0.1), rgba(245, 197, 208, 0.1));
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+            text-align: center;
+            display: none;
+        }
+
+        .mood-suggestion.show {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .mood-suggestion h3 {
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .mood-suggestion p {
+            color: var(--color-text-dark);
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+        }
+
+        .mood-suggestion ul {
+            list-style: none;
+            text-align: left;
+            margin-top: 1rem;
+            padding: 0;
+        }
+
+        .mood-suggestion li {
+            padding: 0.5rem 0;
+            color: var(--color-text-dark);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .mood-suggestion li:before {
+            content: "✓";
+            color: var(--color-primary);
+            font-weight: bold;
+        }
+
+        /* Journal Page */
+        .journal-page {
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .journal-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .journal-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .journal-header h2 {
+            font-size: 2.5rem;
+            color: var(--color-text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .journal-header p {
+            color: var(--color-text-light);
+            font-size: 1.1rem;
+        }
+
+        /* Animation Control */
+        .animation-speed-slow {
+            animation-duration: 8s;
+        }
+
+        .animation-speed-medium {
+            animation-duration: 6s;
+        }
+
+        /* Audio Controls */
+        .audio-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+        }
+
+        .audio-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.8rem 1.2rem;
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--color-text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .audio-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(168, 213, 168, 0.3);
+        }
+
+        .volume-control {
+            width: 100%;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .volume-control input {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--color-border);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .volume-control input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+        }
+
+        .volume-control input::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Focus Tree */
+        .focus-tree-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 2rem;
+            min-height: 400px;
+        }
+
+        .focus-tree-svg {
+            width: 200px;
+            height: 250px;
+        }
+
+        .tree-trunk {
+            fill: #8B6F47;
+        }
+
+        .tree-leaves {
+            animation: treeGrow 1s ease-out forwards;
+            transform-origin: 100px 100px;
+        }
+
+        @keyframes treeGrow {
+            from {
+                transform: scaleY(0);
+                opacity: 0;
+            }
+            to {
+                transform: scaleY(1);
+                opacity: 1;
+            }
+        }
+
+        .tree-particle {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        /* Time Selection Bar */
+        .time-selector {
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+        }
+
+        .time-display {
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--color-primary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .time-bar-container {
+            width: 100%;
+            height: 12px;
+            background: var(--color-border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .time-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent-2));
+            border-radius: 6px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--color-text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .preset-times {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+        }
+
+        .preset-btn {
+            padding: 0.8rem;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--color-text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover,
+        .preset-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        /* Progress Icons */
+        .progress-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 0.5rem;
+        }
+
+        /* Handwriting Journal */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
+        .journal-page-v2 {
+            min-height: 100vh;
+            padding: 2rem;
+            background: linear-gradient(135deg, #fffef9 0%, #f5ebe5 100%);
+        }
+
+        .journal-notebook {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            position: relative;
+        }
+
+        .journal-notebook::before {
+            content: '';
+            position: absolute;
+            left: 2rem;
+            top: 2rem;
+            bottom: 2rem;
+            width: 3px;
+            background: linear-gradient(180deg, #a8d5a8, #f5c5d0);
+            border-radius: 2px;
+        }
+
+        .journal-content {
+            padding-left: 2rem;
+        }
+
+        .journal-header-v2 {
+            margin-bottom: 2rem;
+            text-align: center;
+            border-bottom: 2px solid var(--color-border);
+            padding-bottom: 1rem;
+        }
+
+        .journal-header-v2 h2 {
+            font-family: 'Caveat', cursive;
+            font-size: 2.8rem;
+            color: var(--color-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .journal-date {
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            color: var(--color-text-light);
+        }
+
+        .journal-input {
+            width: 100%;
+            min-height: 250px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            border: none;
+            padding: 1rem 0;
+            background: transparent;
+            color: var(--color-text-dark);
+            line-height: 2;
+            resize: none;
+            outline: none;
+            border-bottom: 2px dashed var(--color-border);
+        }
+
+        .journal-input::placeholder {
+            color: var(--color-text-light);
+            opacity: 0.6;
+        }
+
+        .journal-footer {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .journal-btn {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            background: white;
+            color: var(--color-primary);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .journal-btn:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .journal-btn.primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .journal-btn.primary:hover {
+            background: var(--color-accent-2);
+            border-color: var(--color-accent-2);
+        }
+
+        /* Meditation Session Animation */
+        .meditation-animation {
+            width: 150px;
+            height: 150px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .meditation-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--color-primary);
+            position: absolute;
+            animation: meditationPulse 2s ease-in-out infinite;
+        }
+
+        .meditation-circle:nth-child(2) {
+            animation-delay: 0.3s;
+            border-color: var(--color-accent-2);
+        }
+
+        .meditation-circle:nth-child(3) {
+            animation-delay: 0.6s;
+            border-color: var(--color-accent-1);
+        }
+
+        @keyframes meditationPulse {
+            0%, 100% {
+                transform: scale(0.3);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .meditation-center {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        /* Focus Mode Indicator */
+        .focus-mode-badge {
+            background: linear-gradient(135deg, #a8d5a8, #b8e0b8);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        /* Quotes */
+        .quotes-section {
+            background: linear-gradient(135deg, rgba(168, 213, 168, 0.1), rgba(245, 197, 208, 0.1));
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            color: var(--color-text-dark);
+            font-style: italic;
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .quote-author {
+            font-size: 0.95rem;
+            color: var(--color-text-light);
+            font-weight: 600;
+        }
+
+        /* Animations for journal entry */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .journal-page-v2 .journal-notebook {
+            animation: slideInUp 0.6s ease;
+        }
+
+        /* Handwriting effect */
+        .handwriting {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            font-weight: 400;
+        }
+
+        /* Achievement Badges */
+        .badge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .badge:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge.locked {
+            opacity: 0.5;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .badge-icon {
+            font-size: 2.5rem;
+        }
+
+        .badge-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-text-dark);
+        }
+
+        .badge-desc {
+            font-size: 0.7rem;
+            color: var(--color-text-light);
+        }
+
+        /* Profile Page */
+        .profile-page {
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .profile-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 4px solid var(--color-primary);
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 1.8rem;
+            color: var(--color-text-dark);
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .profile-username {
+            font-size: 0.95rem;
+            color: var(--color-text-light);
+            margin-bottom: 1rem;
+        }
+
+        .profile-badge {
+            display: inline-block;
+            background: var(--color-primary);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .profile-section {
+            margin: 2rem 0;
+        }
+
+        .profile-section-title {
+            font-size: 1.3rem;
+            color: var(--color-text-dark);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-text-dark);
+        }
+
+        .input-field {
+            padding: 0.8rem;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .customization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 1rem;
+        }
+
+        .customization-option {
+            padding: 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .customization-option:hover {
+            border-color: var(--color-primary);
+            background: rgba(168, 213, 168, 0.1);
+        }
+
+        .customization-option.selected {
+            border-color: var(--color-primary);
+            background: rgba(168, 213, 168, 0.2);
+        }
+
+        /* Plant Care */
+        .plant-care-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .plant-display {
+            width: 200px;
+            height: 250px;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plant-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .plant-accessories {
+                    #plant-accessories-display {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 1.5rem;
+                        flex-wrap: wrap;
+                    }
+
+                    .plant-accessory {
+                        position: absolute;
+                        font-size: 2rem;
+                        cursor: pointer;
+                        animation: sparkle 1s ease-in-out infinite;
+                    }
+
+                    /* Plant sway animation */
+                    .plant-sway {
+                        transform-origin: 60px 110px;
+                        animation: sway 3s ease-in-out infinite;
+                    }
+
+                    @keyframes sway {
+                        0% { transform: rotate(-3deg); }
+                        50% { transform: rotate(3deg); }
+                        100% { transform: rotate(-3deg); }
+                    }
+
+                    /* accessory float/blink */
+                    .plant-accessory.blink { animation: blink 4s infinite; }
+        .plant-accessory.float { animation: floaty 3s ease-in-out infinite; }
+
+        @keyframes blink {
+            0%, 90% { transform: scaleY(1); }
+            93% { transform: scaleY(0.2); }
+            96% { transform: scaleY(1); }
+            100% { transform: scaleY(1); }
+        }
+
+        @keyframes floaty {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Plant choice cards */
+        .plant-choice {
+            padding: 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            background: white;
+        }
+
+        .plant-choice:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(168, 213, 168, 0.2);
+            transform: translateY(-3px);
+        }                    .plant-status-info {
+                        text-align: center;
+                        margin-top: 1rem;
+                    }
+
+                    .plant-water-status {
+                        font-size: 0.95rem;
+                        color: var(--color-text-light);
+                        font-weight: 500;
+                        padding: 0.75rem;
+                        background: rgba(168, 213, 168, 0.1);
+                        border-radius: 8px;
+                    }
+
+                    .plant-accessories {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .accessory-item {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+        }
+
+        .accessory-item:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .accessory-item.empty {
+            background: transparent;
+            border: 2px dashed var(--color-border);
+        }
+
+        /* Shop */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .shop-item {
+            padding: 1.5rem;
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: var(--color-primary);
+        }
+
+        .shop-item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .shop-item-name {
+            font-weight: 600;
+            color: var(--color-text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .shop-item-price {
+            font-size: 0.9rem;
+            color: var(--color-primary);
+            font-weight: 700;
+        }
+
+        .shop-item.purchased {
+            opacity: 0.5;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .shop-item.purchased::after {
+            content: '✓';
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--color-primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Currency Display */
+        .currency-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent-2));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .currency-display .currency-icon {
+            font-size: 1.3rem;
+        }
+
+        /* Chibi Avatar Creator */
+        .chibi-creator {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--color-border);
+        }
+
+        .chibi-preview {
+            width: 150px;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(168, 213, 168, 0.1), rgba(245, 197, 208, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            margin: 0 auto 1.5rem;
+            border: 2px dashed var(--color-border);
+        }
+
+        .creator-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .option-label {
+            font-weight: 600;
+            color: var(--color-text-dark);
+            font-size: 0.9rem;
+        }
+
+        .option-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .option-btn:hover,
+        .option-btn.selected {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+            color: white;
+        }
+
+        /* Plant Animation */
+        @keyframes plantWave {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        .plant-wave {
+            animation: plantWave 3s ease-in-out infinite;
+            transform-origin: bottom center;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .sparkle {
+            animation: sparkle 1.5s ease-in-out;
+            position: absolute;
+            font-size: 1.5rem;
+        }
+
+        /* Navbar enhancement for profile */
+        .nav-header {
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-btn {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent-2));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .profile-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(168, 213, 168, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header class="app-header">
+                <div class="header-title">
+                <div class="logo" aria-hidden="false" aria-label="Green Time logo">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="plantGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#a8d5a8"/>
+                                <stop offset="100%" stop-color="#b8e0b8"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Pot -->
+                        <path d="M18 40 L20 58 L44 58 L46 40 Z" fill="#d4a574" stroke="#8B6F47" stroke-width="1"/>
+                        <ellipse cx="32" cy="40" rx="14" ry="4" fill="#c9956a"/>
+                        <!-- Soil -->
+                        <ellipse cx="32" cy="42" rx="13" ry="3" fill="#8B6F47" opacity="0.3"/>
+                        <!-- Main stem -->
+                        <path d="M32 42 Q30 30 32 15" stroke="#7cb342" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <!-- Left leaf -->
+                        <ellipse cx="22" cy="28" rx="8" ry="12" fill="url(#plantGrad)" transform="rotate(-35 22 28)"/>
+                        <!-- Right leaf -->
+                        <ellipse cx="42" cy="25" rx="8" ry="12" fill="#b8e0b8" transform="rotate(35 42 25)"/>
+                        <!-- Top leaf -->
+                        <ellipse cx="32" cy="12" rx="6" ry="10" fill="#a8d5a8"/>
+                        <!-- Small side leaf left -->
+                        <ellipse cx="28" cy="20" rx="5" ry="8" fill="#a8d5a8" opacity="0.8" transform="rotate(-25 28 20)"/>
+                        <!-- Small side leaf right -->
+                        <ellipse cx="36" cy="18" rx="5" ry="8" fill="#b8e0b8" opacity="0.8" transform="rotate(25 36 18)"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1>Green Time</h1>
+                    <p>Mindful Sessions & Breaks</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- Navigation -->
+            <div class="nav-header" style="margin-bottom: 2rem;">
+                <div style="display: flex; gap: 1rem;">
+                    <button class="nav-btn active" id="sessionsBtn" onclick="showPage('home')">Sessions</button>
+                    <button class="nav-btn" id="exercisesBtn" onclick="showPage('exercises')">Meditation Exercises</button>
+                </div>
+                <div class="nav-right" style="display: flex; align-items: center; gap: 1rem;">
+                    <div class="currency-display">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1v4" stroke="#a8d5a8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 19v4" stroke="#a8d5a8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="8" stroke="#a8d5a8" stroke-width="1.5"/></svg>
+                        <span id="timeCreditsDisplay">0</span>
+                    </div>
+                    <button class="profile-btn" onclick="showPage('friends')" style="font-size: 0.9rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 11c1.657 0 3-1.567 3-3.5S17.657 4 16 4s-3 1.567-3 3.5S14.343 11 16 11zM8 11c1.657 0 3-1.567 3-3.5S9.657 4 8 4 5 5.567 5 7.5 6.343 11 8 11z" stroke="#6b6b6b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Friends</button>
+                    <button class="profile-btn" onclick="showPage('profile')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zM4 20c0-3.313 4.03-6 8-6s8 2.687 8 6" stroke="#6b6b6b" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Profile</button>
+                </div>
+            </div>
+
+            <!-- Home Page -->
+            <div id="home" class="page active">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Find Your Moment</h2>
+                    <p style="color: var(--color-text-light); font-size: 1.1rem;">Short, focused sessions to support attention and rest</p>
+                </div>
+
+                <!-- Daily Quote -->
+                <div style="background: linear-gradient(135deg, rgba(168, 213, 168, 0.1) 0%, rgba(245, 197, 208, 0.1) 100%); padding: 2rem; border-radius: 16px; border: 2px solid var(--color-border); margin-bottom: 3rem; text-align: center;">
+                    <p style="font-size: 1.1rem; color: var(--color-text-dark); font-style: italic; margin-bottom: 0.5rem;" id="dailyQuote">Breathe in peace, breathe out stress.</p>
+                    <p style="font-size: 0.9rem; color: var(--color-text-light);" id="quoteAuthor">— Green Time</p>
+                </div>
+
+                <div class="sessions-grid">
+                    <div class="session-card session-focus" onclick="showFocusMode()">
+                        <div class="session-icon" aria-hidden="true">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="64" cy="64" r="50" fill="none" stroke="#a8d5a8" stroke-width="3"/>
+                                <path d="M64 30 L74 50 L95 55 L80 68 L85 90 L64 75 L43 90 L48 68 L33 55 L54 50 Z" fill="#a8d5a8" opacity="0.8"/>
+                            </svg>
+                        </div>
+                        <h3>Focus Tree</h3>
+                        <p>Deep work session</p>
+                        <div style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--color-text-light);">Boost productivity</div>
+                    </div>
+
+                    <div class="session-card session-break" onclick="startSession('break', 'Short Break', 'Recharge yourself (5 min)', 5 * 60, '#b8e0b8')">
+                        <div class="session-icon" aria-hidden="true">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="64" cy="64" r="48" fill="none" stroke="#b8e0b8" stroke-width="4" opacity="0.6"/>
+                                <path d="M64 30 L64 98 M30 64 L98 64" stroke="#b8e0b8" stroke-width="4" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        <h3>Short Break</h3>
+                        <p>Recharge yourself (5 min)</p>
+                        <div style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--color-text-light);">Quick refresh</div>
+                    </div>
+
+                    <div class="session-card session-meditation" onclick="startSession('meditation', 'Meditation', 'Mindful practice (10 min)', 10 * 60, '#f5c5d0')">
+                        <div class="session-icon" aria-hidden="true">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="64" cy="40" r="18" fill="none" stroke="#f5c5d0" stroke-width="3"/>
+                                <path d="M48 65 Q64 85 80 65" fill="none" stroke="#f5c5d0" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="64" cy="100" r="6" fill="#f5c5d0"/>
+                            </svg>
+                        </div>
+                        <h3>Meditation</h3>
+                        <p>Mindful practice (10 min)</p>
+                        <div style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--color-text-light);">Focused awareness</div>
+                    </div>
+
+                    <div class="session-card session-sleep" onclick="startSession('sleep', 'Sleep Prep', 'Wind down for sleep (15 min)', 15 * 60, '#e8c8d8')">
+                        <div class="session-icon" aria-hidden="true">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M50 50 Q40 60 40 75 Q40 90 55 95 Q70 100 80 85 Q85 70 75 55 Z" fill="#e8c8d8" opacity="0.7"/>
+                                <circle cx="65" cy="65" r="8" fill="#f5c5d0"/>
+                            </svg>
+                        </div>
+                        <h3>Sleep Prep</h3>
+                        <p>Wind down for sleep (15 min)</p>
+                        <div style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--color-text-light);">Wind down</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 2rem 0; display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <button class="session-card session-breathing" onclick="startBreathing()" style="width: 100%; max-width: 300px; margin: 0 auto;">
+                        <div class="session-icon" aria-hidden="true">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="64" cy="64" r="50" fill="none" stroke="#c5d4f5" stroke-width="3"/>
+                                <path d="M64 20 Q80 35 80 64 Q80 90 64 100 Q48 90 48 64 Q48 35 64 20" fill="#c5d4f5" opacity="0.7"/>
+                            </svg>
+                        </div>
+                        <h3>Breathing Practice</h3>
+                        <p>4-4-6 box breathing technique</p>
+                    </button>
+
+                    <button class="session-card session-meditation" onclick="showMeditationAnimation()" style="width: 100%; max-width: 300px; margin: 0 auto;">
+                        <div class="session-icon" aria-hidden="true">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="64" cy="35" r="18" fill="#e8c8d8" opacity="0.8"/>
+                                <path d="M64 55 L50 75 L55 90 L64 85 L73 90 L78 75 Z" fill="#e8c8d8" opacity="0.7"/>
+                                <circle cx="40" cy="105" r="12" fill="#a8d5a8" opacity="0.5"/>
+                                <circle cx="88" cy="105" r="12" fill="#a8d5a8" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <h3>Peaceful Meditation</h3>
+                        <p>Animated mindfulness session</p>
+                    </button>
+                </div>
+
+                <div class="progress-tracker">
+                    <div class="progress-title">Your Progress</div>
+                    <div class="progress-grid">
+                        <div class="progress-card">
+                            <div class="progress-icon" aria-hidden="true">🧘</div>
+                            <div class="progress-value" id="sessionCount">0</div>
+                            <div class="progress-label">Sessions</div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-icon" style="background: #f5c5d0;" aria-hidden="true">🔥</div>
+                            <div class="progress-value" id="streakCount">0</div>
+                            <div class="progress-label">Day Streak</div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-icon" style="background: #b8e0b8;" aria-hidden="true">⏱️</div>
+                            <div class="progress-value" id="minutesCount">0</div>
+                            <div class="progress-label">Minutes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engagement Tips -->
+                <div style="margin-top: 2rem; padding: 2rem; background: white; border: 2px solid var(--color-border); border-radius: 20px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);">
+                    <h3 style="margin-bottom: 1rem; color: var(--color-text-dark);">Today's Tip</h3>
+                    <p style="color: var(--color-text-light); line-height: 1.6; margin-bottom: 1rem;" id="dailyTip">Start with just 5 minutes. Small moments create big changes over time.</p>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button onclick="nextTip()" style="padding: 0.75rem 1.5rem; background: var(--color-primary); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 500; transition: 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Next Tip</button>
+                        <button onclick="toggleAchievements()" style="padding: 0.75rem 1.5rem; background: rgba(168, 213, 168, 0.1); color: var(--color-text-dark); border: 2px solid var(--color-primary); border-radius: 12px; cursor: pointer; font-weight: 500; transition: 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Achievements</button>
+                        <button onclick="showPage('journal-v2')" style="padding: 0.75rem 1.5rem; background: rgba(245, 197, 208, 0.3); color: var(--color-text-dark); border: 2px solid var(--color-secondary); border-radius: 12px; cursor: pointer; font-weight: 500; transition: 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">📓 Journal</button>
+                    </div>
+                </div>
+
+                <!-- Achievements Modal -->
+                <div id="achievementsModal" style="display: none; margin-top: 2rem; padding: 2rem; background: white; border: 2px solid var(--color-border); border-radius: 20px;">
+                    <h3 style="margin-bottom: 1rem;">Your Achievements</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
+                        <div style="text-align: center; padding: 1rem; background: rgba(168, 213, 168, 0.1); border-radius: 12px;" id="ach1">
+                            <div style="font-size: 20px; font-weight: 700; margin-bottom: 0.5rem;">1</div>
+                            <div style="font-size: 0.85rem; font-weight: 600;">First Step</div>
+                            <div style="font-size: 0.8rem; color: var(--color-text-light);">1 session</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: rgba(168, 213, 168, 0.1); border-radius: 12px; opacity: 0.5;" id="ach2">
+                            <div style="font-size: 20px; font-weight: 700; margin-bottom: 0.5rem;">5</div>
+                            <div style="font-size: 0.85rem; font-weight: 600;">Growing</div>
+                            <div style="font-size: 0.8rem; color: var(--color-text-light);">5 sessions</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: rgba(168, 213, 168, 0.1); border-radius: 12px; opacity: 0.5;" id="ach3">
+                            <div style="font-size: 20px; font-weight: 700; margin-bottom: 0.5rem;">10</div>
+                            <div style="font-size: 0.85rem; font-weight: 600;">Thriving</div>
+                            <div style="font-size: 0.8rem; color: var(--color-text-light);">10 sessions</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: rgba(168, 213, 168, 0.1); border-radius: 12px; opacity: 0.5;" id="ach4">
+                            <div style="font-size: 20px; font-weight: 700; margin-bottom: 0.5rem;">7D</div>
+                            <div style="font-size: 0.85rem; font-weight: 600;">7-Day Streak</div>
+                            <div style="font-size: 0.8rem; color: var(--color-text-light);">Daily practice</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exercises Page -->
+            <div id="exercises" class="page">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Meditation Exercises</h2>
+                    <p style="color: var(--color-text-light); font-size: 1.1rem;">Choose an exercise to practice mindfulness</p>
+                </div>
+
+                <div class="exercises-grid">
+                    <div class="exercise-card" onclick="showExerciseInstructions('breathing-advanced', 'Extended Breathing', 'Deepen breath awareness and capacity')">
+                        <div class="exercise-icon">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="64" cy="64" r="50" fill="none" stroke="#a8d5a8" stroke-width="3"/>
+                                <path d="M64 20 Q80 35 80 64 Q80 90 64 100 Q48 90 48 64 Q48 35 64 20" fill="#a8d5a8" opacity="0.7"/>
+                            </svg>
+                        </div>
+                        <h3>Extended Breathing</h3>
+                        <p>Deepen breath awareness and capacity</p>
+                    </div>
+
+                    <div class="exercise-card" onclick="showExerciseInstructions('body-scan', 'Body Scan', 'Progressive relaxation through awareness')">
+                        <div class="exercise-icon">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="64" cy="35" rx="15" ry="18" fill="none" stroke="#f5c5d0" stroke-width="3"/>
+                                <rect x="50" y="55" width="28" height="35" rx="8" fill="none" stroke="#f5c5d0" stroke-width="3"/>
+                                <line x1="48" y1="70" x2="25" y2="90" stroke="#f5c5d0" stroke-width="3"/>
+                                <line x1="80" y1="70" x2="103" y2="90" stroke="#f5c5d0" stroke-width="3"/>
+                            </svg>
+                        </div>
+                        <h3>Body Scan</h3>
+                        <p>Progressive relaxation through awareness</p>
+                    </div>
+
+                    <div class="exercise-card" onclick="showExerciseInstructions('loving-kindness', 'Loving Kindness', 'Cultivate compassion and kindness')">
+                        <div class="exercise-icon">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M64 30 L70 45 L86 45 L74 55 L79 70 L64 60 L49 70 L54 55 L42 45 L58 45 Z" fill="#b8e0b8" opacity="0.7"/>
+                                <circle cx="40" cy="90" r="12" fill="#b8e0b8" opacity="0.5"/>
+                                <circle cx="88" cy="90" r="12" fill="#b8e0b8" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <h3>Loving Kindness</h3>
+                        <p>Cultivate compassion and kindness</p>
+                    </div>
+
+                    <div class="exercise-card" onclick="showExerciseInstructions('visualization', 'Visualization', 'Guided mental imagery and exploration')">
+                        <div class="exercise-icon">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="40" cy="50" r="18" fill="none" stroke="#e8c8d8" stroke-width="3"/>
+                                <circle cx="88" cy="50" r="18" fill="none" stroke="#e8c8d8" stroke-width="3"/>
+                                <path d="M35 85 Q64 110 93 85" fill="none" stroke="#e8c8d8" stroke-width="3"/>
+                            </svg>
+                        </div>
+                        <h3>Visualization</h3>
+                        <p>Guided mental imagery and exploration</p>
+                    </div>
+
+                    <div class="exercise-card" onclick="showExerciseInstructions('mindful-walking', 'Mindful Walking', 'Movement with full awareness')">
+                        <div class="exercise-icon">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="64" cy="25" r="10" fill="#f5d4a8" opacity="0.8"/>
+                                <rect x="58" y="38" width="12" height="25" fill="none" stroke="#f5d4a8" stroke-width="3"/>
+                                <line x1="52" y1="45" x2="35" y2="30" stroke="#f5d4a8" stroke-width="3"/>
+                                <line x1="76" y1="45" x2="93" y2="30" stroke="#f5d4a8" stroke-width="3"/>
+                                <line x1="56" y1="63" x2="40" y2="85" stroke="#f5d4a8" stroke-width="3"/>
+                                <line x1="72" y1="63" x2="88" y2="85" stroke="#f5d4a8" stroke-width="3"/>
+                            </svg>
+                        </div>
+                        <h3>Mindful Walking</h3>
+                        <p>Movement with full awareness</p>
+                    </div>
+
+                    <div class="exercise-card" onclick="showExerciseInstructions('sound-meditation', 'Sound Meditation', 'Awareness through listening')">
+                        <div class="exercise-icon">
+                            <svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M64 30 V98" fill="none" stroke="#c5d4f5" stroke-width="3"/>
+                                <path d="M50 50 Q60 65 64 80 Q68 65 78 50" fill="none" stroke="#c5d4f5" stroke-width="2"/>
+                                <path d="M42 45 Q55 70 64 95 Q73 70 86 45" fill="none" stroke="#c5d4f5" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3>Sound Meditation</h3>
+                        <p>Awareness through listening</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guided Script Page -->
+            <div id="guided-script" class="page">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Guided Meditation</h2>
+                    <p style="color: var(--color-text-light); font-size: 1.1rem;">A peaceful journey of mindfulness</p>
+                </div>
+
+                <div class="guided-script" id="guidedScriptContainer">
+                    <div class="script-text" id="scriptText">Let your breathing become natural and effortless.</div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="timer-btn" id="scriptPlayBtn" onclick="playGuidedScript()">Play Guided Meditation</button>
+                    <button class="timer-btn secondary" onclick="showPage('exercises')" style="margin-left: 1rem;">Back</button>
+                </div>
+
+                <div id="audioControls" class="audio-controls" style="display: none;">
+                    <h4 style="width: 100%; margin-bottom: 0.5rem;">Ambient Sound</h4>
+                    <button class="audio-btn" onclick="toggleAudio('rain')">🌧️ Rain</button>
+                    <button class="audio-btn" onclick="toggleAudio('windchime')">🎐 Wind Chimes</button>
+                    <button class="audio-btn" onclick="toggleAudio('fire')">🔥 Fire Crackle</button>
+                    <div class="volume-control">
+                        <span>🔊</span>
+                        <input type="range" id="volumeControl" min="0" max="100" value="50" onchange="setVolume(this.value)">
+                        <span id="volumeDisplay">50%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journal Page -->
+            <div id="journal" class="page journal-page">
+                <div class="journal-container">
+                    <div class="journal-header">
+                        <h2>How are you feeling?</h2>
+                        <p>Reflect on your session with an emotion check-in</p>
+                    </div>
+
+                    <div class="mood-selector">
+                        <div class="mood-display" id="moodEmoji">😐</div>
+                        <div class="emoji-slider-container">
+                            <span style="font-size: 1.5rem;">😔</span>
+                            <div class="emoji-slider">
+                                <input type="range" id="moodSlider" min="0" max="100" value="50" onchange="updateMood(this.value)">
+                            </div>
+                            <span style="font-size: 1.5rem;">😄</span>
+                        </div>
+                        <div class="mood-text" id="moodText">Neutral</div>
+                    </div>
+
+                    <div class="mood-suggestion" id="moodSuggestion">
+                        <h3 id="suggestionTitle">How to Improve Your Mood</h3>
+                        <p id="suggestionText"></p>
+                        <ul id="suggestionList"></ul>
+                    </div>
+
+                    <div style="margin-top: 2rem; text-align: center;">
+                        <button class="timer-btn" onclick="saveJournalEntry()">Save Entry</button>
+                        <button class="timer-btn secondary" onclick="showPage('home')" style="margin-left: 1rem;">Back to Home</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Focus Mode Page -->
+            <div id="focus-mode" class="page">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div class="focus-mode-badge">🌳 Focus Tree Mode</div>
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Select Your Focus Time</h2>
+                    <p style="color: var(--color-text-light); font-size: 1.1rem;">Watch your tree grow as you work</p>
+                </div>
+
+                <div style="display: flex; justify-content: center; margin-bottom: 3rem;">
+                    <div class="time-selector">
+                        <div class="time-display" id="focusTimeDisplay">25:00</div>
+                        <div class="time-bar-container" onclick="selectTime(event)">
+                            <div class="time-bar-fill" id="timeBarFill"></div>
+                        </div>
+                        <div class="time-labels">
+                            <span>5 min</span>
+                            <span>50 min</span>
+                        </div>
+                        <div class="preset-times">
+                            <button class="preset-btn active" onclick="setPresetTime(5)">5 min</button>
+                            <button class="preset-btn" onclick="setPresetTime(15)">15 min</button>
+                            <button class="preset-btn" onclick="setPresetTime(25)">25 min</button>
+                            <button class="preset-btn" onclick="setPresetTime(30)">30 min</button>
+                            <button class="preset-btn" onclick="setPresetTime(45)">45 min</button>
+                            <button class="preset-btn" onclick="setPresetTime(50)">50 min</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <button class="timer-btn" onclick="startFocusMode()" style="padding: 1rem 2rem; font-size: 1.1rem;">Start Focus Tree 🌱</button>
+                    <button class="timer-btn secondary" onclick="showPage('home')" style="margin-left: 1rem;">Back</button>
+                </div>
+            </div>
+
+            <!-- Focus Tree Display Page -->
+            <div id="focus-tree" class="page">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div class="focus-mode-badge">Focus Tree Growing</div>
+                    <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem;">Stay Focused</h2>
+                </div>
+
+                <div class="focus-tree-container">
+                    <svg class="focus-tree-svg" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Tree trunk -->
+                        <rect x="90" y="150" width="20" height="80" class="tree-trunk" rx="3"/>
+                        
+                        <!-- Tree leaves that grow -->
+                        <g class="tree-leaves" id="treeLeaves">
+                            <circle cx="100" cy="80" r="45" fill="#a8d5a8" opacity="0.8"/>
+                            <circle cx="70" cy="110" r="35" fill="#b8e0b8" opacity="0.7"/>
+                            <circle cx="130" cy="110" r="35" fill="#b8e0b8" opacity="0.7"/>
+                            <circle cx="100" cy="130" r="30" fill="#a8d5a8" opacity="0.9"/>
+                        </g>
+                    </svg>
+                    
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;" id="focusTimerDisplay">25:00</div>
+                        <p style="color: var(--color-text-light); margin-bottom: 2rem;">Your tree is growing with your focus</p>
+                        <button class="timer-btn" id="focusPauseBtn" onclick="toggleFocusTimer()">Pause</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meditation Animation Page -->
+            <div id="meditation-anim" class="page">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem;">Peaceful Meditation</h2>
+                    <p style="color: var(--color-text-light); font-size: 1.1rem;">Watch the gentle rhythm of your breath</p>
+                </div>
+
+                <div class="meditation-animation">
+                    <div class="meditation-circle"></div>
+                    <div class="meditation-circle"></div>
+                    <div class="meditation-circle"></div>
+                    <div class="meditation-center"></div>
+                </div>
+
+                <div style="text-align: center; margin-top: 3rem;">
+                    <div class="quotes-section">
+                        <div class="quote-text" id="meditationQuote">"The present moment is filled with joy and peace."</div>
+                        <div class="quote-author" id="meditationQuoteAuthor">— Unknown</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="timer-btn" onclick="showPage('home')">End Meditation</button>
+                </div>
+            </div>
+
+            <!-- Handwriting Journal Page -->
+            <div id="journal-v2" class="page journal-page-v2">
+                <div class="journal-notebook">
+                    <div class="journal-content">
+                        <div class="journal-header-v2">
+                            <h2>Today's Journey</h2>
+                            <p class="journal-date" id="journalDate">December 9, 2025</p>
+                        </div>
+                        <input type="text" id="journalTitle" placeholder="Give this entry a title (optional)" style="width:100%; padding:0.6rem; border-radius:8px; border:1px solid var(--color-border); margin-bottom:0.8rem; font-size:1rem;" />
+                        <textarea class="journal-input handwriting" id="journalEntry" placeholder="Write your thoughts, feelings, and progress..."></textarea>
+
+                        <div style="margin-top:1rem; display:flex; gap:1rem;">
+                            <div style="flex:1">
+                                <h4 style="margin:0 0 0.5rem 0;">Previous Entries</h4>
+                                <div id="journalHistoryList" style="max-height:220px; overflow:auto; border:1px solid var(--color-border); border-radius:8px; padding:0.6rem; background:#fff;"></div>
+                            </div>
+                            <div style="width:220px;">
+                                <h4 style="margin:0 0 0.5rem 0;">Preview</h4>
+                                <div id="journalPreview" style="min-height:180px; border:1px solid var(--color-border); border-radius:8px; padding:0.6rem; background:#fff; overflow:auto; font-family:inherit;"></div>
+                            </div>
+                        </div>
+
+                        <div class="journal-footer">
+                            <button class="journal-btn primary" onclick="saveJournalEntryV2()">Save</button>
+                            <button class="journal-btn" onclick="showPage('home')">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+            <!-- Profile Page -->
+            <div id="profile" class="page profile-page">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div style="display:flex;gap:1rem;align-items:center;">
+                            <div class="profile-avatar" id="profileAvatar" style="cursor:pointer;" onclick="document.getElementById('profilePhotoInput').click();"></div>
+                            <div style="display:none;"><input type="file" id="profilePhotoInput" accept="image/*" onchange="uploadProfilePhoto(event)"></div>
+                        </div>
+                        <div class="profile-info">
+                            <input type="text" id="profileName" class="input-field" placeholder="Your Name" value="Meditator">
+                            <div class="profile-username">@<input id="profileUsername" style="border:none;background:transparent;font-weight:700;outline:none;" value="username" /></div>
+                            <div class="profile-badge" id="levelBadge">Level 1</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h3 class="profile-section-title">🎯 Your Goals</h3>
+                        <div class="input-group">
+                            <textarea id="profileGoals" class="input-field" placeholder="What do you want to achieve?" style="min-height: 100px;">I want to build a consistent meditation practice</textarea>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h3 class="profile-section-title">🎨 Customize Profile</h3>
+                        <div class="input-group">
+                            <label class="input-label">Font Style</label>
+                            <div class="customization-grid">
+                                <div class="customization-option selected" data-font="default" onclick="selectFont('default', this)">Default</div>
+                                <div class="customization-option" data-font="cursive" onclick="selectFont('cursive', this)" style="font-family: 'Caveat', cursive;">Cursive</div>
+                                <div class="customization-option" data-font="monospace" onclick="selectFont('monospace', this)" style="font-family: monospace;">Mono</div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">Background</label>
+                            <div class="customization-grid">
+                                <div class="customization-option selected" data-bg="default" onclick="selectBg('default', this)" style="background: white;"></div>
+                                <div class="customization-option" data-bg="green" onclick="selectBg('green', this)" style="background: rgba(168, 213, 168, 0.2);"></div>
+                                <div class="customization-option" data-bg="pink" onclick="selectBg('pink', this)" style="background: rgba(245, 197, 208, 0.2);"></div>
+                                <div class="customization-option" data-bg="pastel" onclick="selectBg('pastel', this)" style="background: linear-gradient(135deg, rgba(168, 213, 168, 0.1), rgba(245, 197, 208, 0.1));"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-section">
+                        <h3 class="profile-section-title">🌿 Your Plant</h3>
+                        <div class="plant-care-container">
+                            <div class="plant-display" id="personalPlant">
+                                <svg class="plant-svg profile-plant-svg" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="80" y="150" width="40" height="80" fill="#8B6F47" rx="3"/>
+                                    <ellipse cx="100" cy="150" rx="20" ry="5" fill="#c9956a"/>
+                                    <g class="plant-wave">
+                                        <circle cx="100" cy="80" r="50" fill="#a8d5a8" opacity="0.8"/>
+                                        <circle cx="70" cy="110" r="40" fill="#b8e0b8" opacity="0.7"/>
+                                        <circle cx="130" cy="110" r="40" fill="#b8e0b8" opacity="0.7"/>
+                                    </g>
+                                </svg>
+                            <div id="plant-accessories-display" style="position: absolute; width: 100%; height: 100%; pointer-events: none;"></div>
+                            </div>
+                            <div class="plant-status-info">
+                                <div class="plant-water-status">💧 Water: 100% | 💚 Health: 100%</div>
+                                <button class="timer-btn" onclick="waterPlant()" style="margin-top: 1rem; font-size: 0.9rem;">💧 Water Plant (+1 Credit)</button>
+                            </div>
+                            <div class="plant-accessories" id="plantAccessories"></div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+                        <button class="timer-btn" onclick="showPage('wardrobe')">🌿 Plant Wardrobe</button>
+                        <button class="timer-btn" onclick="saveProfile()">Save Profile</button>
+                        <button class="timer-btn secondary" onclick="showPage('home')">Back</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Avatar Creator Page -->
+            <div id="avatar-creator" class="page profile-page">
+                <div class="profile-card">
+                    <h2 style="text-align: center; margin-bottom: 2rem;">👤 Create Your Avatar</h2>
+                    <div class="chibi-creator">
+                        <div class="chibi-preview" id="chibiPreview">😊</div>
+                        <div class="creator-options">
+                            <div class="option-group">
+                                <label class="option-label">Face</label>
+                                <div class="option-buttons">
+                                    <button class="option-btn selected" onclick="selectChibi('😊', this)">😊</button>
+                                    <button class="option-btn" onclick="selectChibi('😄', this)">😄</button>
+                                    <button class="option-btn" onclick="selectChibi('🥰', this)">🥰</button>
+                                    <button class="option-btn" onclick="selectChibi('😍', this)">😍</button>
+                                </div>
+                            </div>
+                            <div class="option-group">
+                                <label class="option-label">Skin Tone</label>
+                                <div class="option-buttons">
+                                    <button class="option-btn selected" onclick="selectChibiSkin('👧', this)">👧</button>
+                                    <button class="option-btn" onclick="selectChibiSkin('🧑', this)">🧑</button>
+                                    <button class="option-btn" onclick="selectChibiSkin('👨', this)">👨</button>
+                                </div>
+                            </div>
+                            <div class="option-group">
+                                <label class="option-label">Hair</label>
+                                <div class="option-buttons">
+                                    <button class="option-btn selected" onclick="selectChibiHair('👩', this)">Long</button>
+                                    <button class="option-btn" onclick="selectChibiHair('👨', this)">Short</button>
+                                    <button class="option-btn" onclick="selectChibiHair('🧑', this)">Curly</button>
+                                </div>
+                            </div>
+                            <div class="option-group">
+                                <label class="option-label">Accessory</label>
+                                <div class="option-buttons">
+                                    <button class="option-btn selected" onclick="selectChibiAccessory('none', this)">None</button>
+                                    <button class="option-btn" onclick="selectChibiAccessory('🎀', this)">🎀</button>
+                                    <button class="option-btn" onclick="selectChibiAccessory('👑', this)">👑</button>
+                                    <button class="option-btn" onclick="selectChibiAccessory('🎩', this)">🎩</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="timer-btn" onclick="saveChibi()">Save Avatar</button>
+                        <button class="timer-btn secondary" onclick="showPage('profile')" style="margin-left: 1rem;">Back</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wardrobe / Changing Room Page -->
+            <div id="wardrobe" class="page profile-page">
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 2rem; margin-bottom: 1rem;">🌿 Plant Wardrobe</h2>
+                        <p style="color: var(--color-text-light); margin-bottom: 1rem;">Preview your plant with equipped accessories and background</p>
+                    </div>
+
+                    <div style="background: var(--color-bg-light); padding: 2rem; border-radius: 16px; margin-bottom: 2rem; text-align: center; min-height: 400px; position: relative; overflow: hidden;" id="wardrobePreview">
+                        <!-- Plant with background and accessories will be rendered here -->
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem;">
+                        <div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">🎀 Accessory</h3>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="accessorySelectList"></div>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">🏠 Background</h3>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;" id="backgroundSelectList"></div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center;">
+                        <button class="timer-btn" onclick="showPage('profile')">Back to Profile</button>
+                        <button class="timer-btn" style="background: var(--color-accent-2); margin-left: 0.5rem;" onclick="showPage('shop')">Go to Shop</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shop Page -->
+            <div id="shop" class="page profile-page">
+                <div style="max-width: 900px; margin: 0 auto;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 2rem; margin-bottom: 1rem;">🌿 Plant Shop</h2>
+                        <div class="currency-display" style="justify-content: center;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 1v4" stroke="#a8d5a8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 19v4" stroke="#a8d5a8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="8" stroke="#a8d5a8" stroke-width="1.5"/></svg>
+                            <span id="shopCreditsDisplay">0</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:1.5rem;">
+                        <h3>Accessories & Decor</h3>
+                        <div class="shop-grid" id="shopGrid"></div>
+                    </div>
+
+                    <div style="margin-bottom:1.5rem;">
+                        <h3>Wardrobe & Background Decor</h3>
+                        <p style="color:var(--color-text-light);margin-bottom:0.8rem;">Decorate your plant's room!</p>
+                        <div class="shop-grid" id="backgroundShopGrid"></div>
+                    </div>
+
+                    <div style="margin-bottom:1.5rem;">
+                        <h3>Your Equipped Items</h3>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:1rem;" id="equippedItemsDisplay"></div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="timer-btn" onclick="showPage('profile')">Back to Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements Page -->
+            <div id="achievements" class="page profile-page">
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 2rem; margin-bottom: 1rem;">🏆 Achievements & Badges</h2>
+                    </div>
+
+                    <div class="badge-grid" id="badgeGrid"></div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="timer-btn" onclick="showPage('profile')">Back to Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Friends Page -->
+            <div id="friends" class="page profile-page">
+                <div style="max-width: 800px; margin: 0 auto;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <h2 style="font-size: 2rem; margin-bottom: 1rem;">👥 Friends & Shared Plants</h2>
+                    </div>
+
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; border: 2px solid var(--color-border); margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--color-text-dark);">Add a Friend</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="friendUsername" placeholder="Enter friend's username..." style="flex: 1; padding: 0.8rem; border: 1px solid var(--color-border); border-radius: 8px; font-size: 1rem;" />
+                            <button class="timer-btn" onclick="addFriend()">Add Friend</button>
+                        </div>
+                        <div style="margin-top:1rem;">
+                            <h4 style="margin:0 0 0.5rem 0;">Search Users</h4>
+                            <div style="display:flex; gap:0.5rem;"><input id="friendSearch" placeholder="Search username..." style="flex:1;padding:0.6rem;border:1px solid var(--color-border);border-radius:8px;" /><button class="timer-btn" onclick="searchUsers()">Search</button></div>
+                            <div id="searchResults" style="margin-top:0.6rem;"></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--color-text-dark);">Friend Requests</h3>
+                        <div id="friendRequestsList" style="margin-bottom:1rem;"></div>
+                        <h3 style="margin-bottom: 1rem; color: var(--color-text-dark);">Your Friends</h3>
+                        <div id="friendsList" style="display: grid; gap: 1rem;"></div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: var(--color-text-dark);">Shared Plants</h3>
+                        <div id="sharedPlantsList" style="display: grid; gap: 1rem;"></div>
+                    </div>
+
+                    <div style="margin-bottom:2rem;">
+                        <h3 style="margin-bottom:1rem; color:var(--color-text-dark);">Messages</h3>
+                        <div id="friendMessagesPanel" style="border:1px solid var(--color-border);border-radius:8px;padding:0.6rem;min-height:120px;max-height:260px;overflow:auto;background:#fff;"></div>
+                        <div style="display:flex;gap:0.5rem;margin-top:0.6rem;"><input id="messageInput" placeholder="Write a message..." style="flex:1;padding:0.6rem;border:1px solid var(--color-border);border-radius:8px;" /><button class="timer-btn" onclick="sendMessageToSelected()">Send</button></div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="timer-btn" onclick="showPage('profile')">Back to Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Choose Plant Page (onboarding) -->
+            <div id="choose-plant" class="page profile-page">
+                <div style="max-width:800px;margin:0 auto;text-align:center;">
+                    <h2 style="font-size:2rem;margin-bottom:0.5rem;">Choose Your Plant</h2>
+                    <p style="color:var(--color-text-light);margin-bottom:1.5rem;">Pick a little friend to care for — each one has cute animations!</p>
+
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
+                        <div class="plant-choice" onclick="selectPlant('sprout')">
+                            <svg viewBox="0 0 120 140" width="120" height="140"><g class="plant-sway"><circle cx="60" cy="60" r="28" fill="#b8e0b8"/><circle cx="45" cy="85" r="20" fill="#a8d5a8"/><circle cx="75" cy="85" r="20" fill="#a8d5a8"/></g><rect x="45" y="110" width="30" height="18" rx="4" fill="#8b6f47"/></svg>
+                            <div style="margin-top:0.6rem;"><strong>Sprout</strong><div style="font-size:0.85rem;color:var(--color-text-light)">Cheerful little sprout</div></div>
+                        </div>
+                        <div class="plant-choice" onclick="selectPlant('leafy')">
+                            <svg viewBox="0 0 120 140" width="120" height="140"><g class="plant-sway"><path d="M60 40 C40 30, 30 60, 60 70 C90 60, 80 30, 60 40 Z" fill="#a8d5a8"/><path d="M50 85 C30 75, 25 100, 50 105 C75 100, 70 75, 50 85 Z" fill="#b8e0b8"/></g><rect x="45" y="110" width="30" height="18" rx="4" fill="#8b6f47"/></svg>
+                            <div style="margin-top:0.6rem;"><strong>Leafy</strong><div style="font-size:0.85rem;color:var(--color-text-light)">Lush and calm</div></div>
+                        </div>
+                        <div class="plant-choice" onclick="selectPlant('bloom')">
+                            <svg viewBox="0 0 120 140" width="120" height="140"><g class="plant-sway"><circle cx="60" cy="60" r="16" fill="#ffd1dc"/><circle cx="60" cy="40" r="30" fill="#f5c5d0"/><circle cx="45" cy="70" r="18" fill="#a8d5a8"/><circle cx="75" cy="70" r="18" fill="#a8d5a8"/></g><rect x="45" y="110" width="30" height="18" rx="4" fill="#8b6f47"/></svg>
+                            <div style="margin-top:0.6rem;"><strong>Bloom</strong><div style="font-size:0.85rem;color:var(--color-text-light)">Bright and bubbly</div></div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:1.5rem;"><button class="timer-btn" onclick="skipChoosePlant()">Skip for now</button></div>
+                </div>
+            </div>
+
+        <footer class="app-footer">
+            <p>Slow down and be present</p>
+        </footer>
+    </div>
+
+    <!-- Timer Modal -->
+    <div class="modal" id="timerModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <div class="modal-header">
+                <div class="modal-icon" id="timerIcon"></div>
+                <div>
+                    <h2 id="timerTitle">Session</h2>
+                    <p id="timerDesc">Description</p>
+                </div>
+            </div>
+
+            <div class="timer-display">
+                <svg class="timer-circle" viewBox="0 0 120 120">
+                    <circle cx="60" cy="60" r="54" class="timer-background" />
+                    <circle cx="60" cy="60" r="54" class="timer-progress" id="timerProgressCircle" />
+                </svg>
+                <div class="timer-time" id="timerDisplay">25:00</div>
+            </div>
+
+            <div class="timer-controls">
+                <button class="timer-btn" id="playBtn" onclick="toggleTimer()">Play</button>
+                <button class="timer-btn secondary" onclick="resetTimer()">Reset</button>
+            </div>
+
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="timerProgressBar"></div>
+            </div>
+
+            <div id="completionMessage" style="display: none; text-align: center; padding: 1.5rem; background: rgba(184, 224, 184, 0.2); border: 2px solid #b8e0b8; border-radius: 16px;">
+                <h3>Session complete</h3>
+                <p>Session completed. Well done.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breathing Modal -->
+    <div class="modal" id="breathingModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <div class="modal-header">
+                <div class="modal-icon" style="background: rgba(168, 213, 168, 0.3); color: #a8d5a8;"></div>
+                <div>
+                    <h2>Breathing Practice</h2>
+                    <p>4-4-6 box breathing technique</p>
+                </div>
+            </div>
+
+            <div class="breathing-circle" id="breathingCircle"></div>
+            <div class="breathing-text" id="breathingText">Breathe in slowly...</div>
+            <div class="breathing-phase" id="breathingPhase">INHALE</div>
+
+            <div class="timer-controls">
+                <button class="timer-btn" id="breathingBtn" onclick="toggleBreathing()">Play</button>
+            </div>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 2px solid var(--color-border); display: flex; justify-content: space-around;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--color-primary);">4</div>
+                    <div style="font-size: 0.85rem; color: var(--color-text-light); text-transform: uppercase;">Inhale</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--color-primary);">4</div>
+                    <div style="font-size: 0.85rem; color: var(--color-text-light); text-transform: uppercase;">Hold</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--color-primary);">6</div>
+                    <div style="font-size: 0.85rem; color: var(--color-text-light); text-transform: uppercase;">Exhale</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Daily inspiration - famous quotes only
+        const quotes = [
+            { text: "The present moment is the only time over which we have dominion.", author: "Thich Nhat Hanh" },
+            { text: "The mind is everything. What you think you become.", author: "Buddha" },
+            { text: "He who lives in harmony with himself lives in harmony with the universe.", author: "Marcus Aurelius" },
+            { text: "Do not be satisfied with the stories that come before you. Unfold your own myth.", author: "Rumi" },
+            { text: "You must be the change you wish to see in the world.", author: "Mahatma Gandhi" },
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "No one can make you feel inferior without your consent.", author: "Eleanor Roosevelt" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "We delight in the beauty of the butterfly, but rarely admit the changes it has gone through to achieve that beauty.", author: "Maya Angelou" },
+            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" }
+        ];
+
+        const tips = [
+            "Start with just 5 minutes. Small moments create big changes over time.",
+            "Try meditating at the same time each day for better consistency.",
+            "Breathing exercises work best in a comfortable, quiet space.",
+            "You don't need to be perfect. Just show up for yourself.",
+            "Notice how you feel after each session - awareness is progress.",
+            "Pair meditation with something you already do daily for habit stacking.",
+            "It's okay to restart. Every moment is a new opportunity.",
+            "Your mind will wander. That's normal. Gently bring it back.",
+            "Celebrate small wins - even 5 minutes counts!",
+            "Try different session types to find what resonates with you."
+        ];
+
+        let tipIndex = 0;
+
+        // Initialize with random quote
+        function initializeQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('dailyQuote').textContent = randomQuote.text;
+            document.getElementById('quoteAuthor').textContent = `— ${randomQuote.author}`;
+        }
+
+        // Next tip functionality
+        function nextTip() {
+            tipIndex = (tipIndex + 1) % tips.length;
+            document.getElementById('dailyTip').textContent = tips[tipIndex];
+        }
+
+        // Toggle achievements
+        function toggleAchievements() {
+            const modal = document.getElementById('achievementsModal');
+            modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+            updateAchievements();
+        }
+
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('meditationProgress');
+            return saved ? JSON.parse(saved) : { totalSessions: 0, streak: 0, totalMinutes: 0 };
+        }
+
+        function saveProgress(progress) {
+            localStorage.setItem('meditationProgress', JSON.stringify(progress));
+            updateProgressDisplay();
+            updateAchievements();
+        }
+
+        function updateProgressDisplay() {
+            const progress = loadProgress();
+            document.getElementById('sessionCount').textContent = progress.totalSessions;
+            document.getElementById('streakCount').textContent = progress.streak;
+            document.getElementById('minutesCount').textContent = progress.totalMinutes;
+        }
+
+        function updateAchievements() {
+            const progress = loadProgress();
+            const sessions = progress.totalSessions;
+
+            // First Step
+            if (sessions >= 1) {
+                document.getElementById('ach1').style.opacity = '1';
+            }
+            // Growing
+            if (sessions >= 5) {
+                document.getElementById('ach2').style.opacity = '1';
+            }
+            // Thriving
+            if (sessions >= 10) {
+                document.getElementById('ach3').style.opacity = '1';
+            }
+            // 7-Day Streak
+            if (progress.streak >= 7) {
+                document.getElementById('ach4').style.opacity = '1';
+            }
+        }
+
+        // Page navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            // Show selected page
+            const page = document.getElementById(pageId);
+            if (page) {
+                page.style.display = 'block';
+                // Initialize wardrobe on load if wardrobe page
+                if (pageId === 'wardrobe') {
+                    initializeWardrobe();
+                }
+                // Initialize shop on load if shop page
+                if (pageId === 'shop') {
+                    initializeShop();
+                }
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initializeQuote();
+            updateProgressDisplay();
+        });
+
+        // Timer functions
+        function startSession(id, title, desc, duration, color, iconPath) {
+            currentSession = { id, title, desc, duration, color, iconPath };
+            timeLeft = duration;
+            totalDuration = duration;
+            isTimerRunning = false;
+
+            document.getElementById('timerTitle').textContent = title;
+            document.getElementById('timerDesc').textContent = desc;
+            const iconEl = document.getElementById('timerIcon');
+            iconEl.innerHTML = '';
+            if (iconPath) {
+                const img = document.createElement('img');
+                img.src = iconPath;
+                img.alt = title + ' icon';
+                img.onerror = function() { this.style.display = 'none'; };
+                iconEl.appendChild(img);
+            } else {
+                iconEl.textContent = title[0];
+            }
+            if (isTimerRunning) {
+                // Start progress bar animation
+                const progressBar = document.getElementById('timerProgressBar');
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                    setTimeout(() => {
+                        progressBar.style.animation = 'progress ' + totalDuration + 's linear forwards';
+                    }, 10);
+                }
+
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+
+                    if (timeLeft <= 0) {
+                        isTimerRunning = false;
+                        clearInterval(timerInterval);
+                        document.getElementById('playBtn').textContent = 'Play';
+                        document.getElementById('completionMessage').style.display = 'block';
+
+                        // Save progress
+                        const progress = loadProgress();
+                        progress.totalSessions++;
+                        const minutesCompleted = Math.ceil(currentSession.duration / 60);
+                        progress.totalMinutes += minutesCompleted;
+                        progress.streak = 1; // Simplified for demo
+                        saveProgress(progress);
+                        
+                        // Award time credits
+                        awardTimeCredits(minutesCompleted);
+                        
+                        // Check achievements
+                        if (progress.totalSessions === 1) unlockAchievement(1);
+                        if (progress.totalSessions === 10) unlockAchievement(3);
+                        if (progress.totalSessions === 50) unlockAchievement(4);
+                        if (progress.totalMinutes >= 60) unlockAchievement(8);
+                    }
+                }, 1000);
+            } else {
+                clearInterval(timerInterval);
+            }
+        }
+
+        function resetTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+            timeLeft = totalDuration;
+            document.getElementById('playBtn').textContent = 'Play';
+            updateTimerDisplay();
+            document.getElementById('completionMessage').style.display = 'none';
+        }
+
+        // Breathing functions
+        function startBreathing() {
+            breathingPhase = 'inhale';
+            breathingTime = 0;
+            isBreathingRunning = false;
+            document.getElementById('breathingBtn').textContent = 'Play';
+            document.getElementById('breathingModal').classList.add('active');
+        }
+
+        function toggleBreathing() {
+            isBreathingRunning = !isBreathingRunning;
+            document.getElementById('breathingBtn').textContent = isBreathingRunning ? 'Pause' : 'Play';
+
+            if (isBreathingRunning) {
+                breathingInterval = setInterval(() => {
+                    breathingTime++;
+
+                    const phaseDurations = { inhale: 4, hold: 4, exhale: 6 };
+                    const maxTime = phaseDurations[breathingPhase];
+
+                    const scale = breathingPhase === 'exhale' ? (0.6 + 0.4 * (1 - breathingTime / maxTime)) : (0.6 + 0.4 * (breathingTime / maxTime));
+                    document.getElementById('breathingCircle').style.transform = `scale(${scale})`;
+
+                    if (breathingTime >= maxTime) {
+                        const phases = ['inhale', 'hold', 'exhale'];
+                        const currentIndex = phases.indexOf(breathingPhase);
+                        breathingPhase = phases[(currentIndex + 1) % phases.length];
+                        breathingTime = 0;
+                        updateBreathingText();
+                    }
+                }, 1000);
+            } else {
+                clearInterval(breathingInterval);
+            }
+        }
+
+        function updateBreathingText() {
+            const messages = {
+                inhale: 'Breathe in slowly...',
+                hold: 'Hold your breath...',
+                exhale: 'Breathe out slowly...'
+            };
+            document.getElementById('breathingText').textContent = messages[breathingPhase];
+            document.getElementById('breathingPhase').textContent = breathingPhase.toUpperCase();
+        }
+
+        // Modal management
+        function closeModal() {
+            isTimerRunning = false;
+            isBreathingRunning = false;
+            clearInterval(timerInterval);
+            clearInterval(breathingInterval);
+            document.getElementById('timerModal').classList.remove('active');
+            document.getElementById('breathingModal').classList.remove('active');
+            document.getElementById('playBtn').textContent = '▶️';
+            document.getElementById('breathingBtn').textContent = '▶️';
+            document.getElementById('profileName').value = userProfile.name || '';
+            // username is editable input
+            const usernameInput = document.getElementById('profileUsername');
+            if (usernameInput) usernameInput.value = userProfile.username || '';
+            const avatarEl = document.getElementById('profileAvatar');
+            if (avatarEl) {
+                if (userProfile.photo) {
+                    avatarEl.style.backgroundImage = `url(${userProfile.photo})`;
+                    avatarEl.style.backgroundSize = 'cover';
+                    avatarEl.style.backgroundPosition = 'center';
+                    avatarEl.textContent = '';
+                } else {
+                    avatarEl.style.backgroundImage = '';
+                    avatarEl.textContent = userProfile.avatar || '🧘';
+                }
+            }
+            document.getElementById('profileGoals').value = userProfile.goals || '';
+            document.getElementById('timeCreditsDisplay').textContent = userProfile.timeCredits || 0;
+            document.getElementById('shopCreditsDisplay').textContent = userProfile.timeCredits || 0;
+            document.getElementById('profileLevel').textContent = 'Level ' + (userProfile.level || 1);
+            document.getElementById('levelBadge').textContent = 'Level ' + (userProfile.level || 1);
+            renderPlantAccessories();
+            updatePlantDisplay();
+        }
+
+        function saveProfile() {
+            userProfile.name = document.getElementById('profileName').value || 'Meditator';
+            const usernameField = document.getElementById('profileUsername');
+            if (usernameField) userProfile.username = usernameField.value || userProfile.username || 'username';
+            userProfile.goals = document.getElementById('profileGoals').value || '';
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            alert('Profile saved!');
+            updateProfileDisplay();
+        }
+
+        function uploadProfilePhoto(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                userProfile.photo = evt.target.result;
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                updateProfileDisplay();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // ===== GUIDED MEDITATION SCRIPTS =====
+        const meditationScripts = {
+            'breathing': [
+                'Your breath is the anchor to the present moment.',
+                'Continue breathing slowly and deeply.',
+                'With each exhale, release worry and stress.',
+                'You are exactly where you need to be.',
+                'Breathe in calm. Breathe out peace.',
+                'Your practice is complete. Well done.'
+            ],
+            'body-scan': [
+                'Close your eyes and relax into comfort.',
+                'Bring awareness to the top of your head.',
+                'Feel any sensations without judgment.',
+                'Slowly move awareness down to your face.',
+                'Relax your jaw and forehead.',
+                'Feel your shoulders releasing tension.',
+                'Notice your arms, hands, and fingers.',
+                'Bring awareness to your chest and heart.',
+                'Move down to your belly and lower back.',
+                'Feel your legs, feet, and toes.',
+                'Your entire body is now relaxed.',
+                'Rest in this peaceful state.',
+                'Slowly begin to deepen your breath.',
+                'When you are ready, open your eyes gently.'
+            ],
+            'loving-kindness': [
+                'Begin by bringing to mind someone you love deeply.',
+                'Visualize them with warmth and affection.',
+                'Send them this wish: May you be happy.',
+                'May you be healthy and free from pain.',
+                'May you be safe and protected.',
+                'Now extend this to yourself with the same care.',
+                'May I be happy and at peace.',
+                'Expand this kindness to a neutral person.',
+                'Someone you do not know well.',
+                'May you also be happy and at ease.',
+                'Finally, extend kindness to all beings everywhere.',
+                'May all beings everywhere be happy and free.',
+                'Your heart is now full of compassion.'
+            ],
+            'visualization': [
+                'Find yourself in a beautiful natural place.',
+                'Notice the colors around you in vivid detail.',
+                'Feel the warmth of the sun or coolness of shade.',
+                'Listen to the gentle sounds of nature.',
+                'Perhaps you hear birds singing or water flowing.',
+                'Breathe in the fresh air deeply.',
+                'Feel the earth beneath your feet grounded and safe.',
+                'This place is your sanctuary of peace.',
+                'You are completely safe here.',
+                'Rest and explore this place freely.',
+                'When ready, bring this peace back with you.',
+                'Slowly return to the present moment.'
+            ],
+            'mindful-walking': [
+                'Stand with your feet shoulder-width apart.',
+                'Feel both feet firmly on the ground.',
+                'Begin walking at a natural, easy pace.',
+                'Notice the sensation of each foot lifting.',
+                'Feel the heel touch down gently.',
+                'Then the ball of your foot makes contact.',
+                'Your full sole presses against the earth.',
+                'With each step, arrive fully in the moment.',
+                'Feel your legs moving, your arms swinging.',
+                'Your breath moving with your body.',
+                'Walking is meditation in motion.',
+                'Continue at your own natural pace, fully present.'
+            ],
+            'sound-meditation': [
+                'Close your eyes and let the ambient music begin.',
+                'Soft melodies flow gently around you.',
+                'Feel yourself drifting into peace.',
+                'The music carries you deeper into calm.',
+                'Each note dissolves tension and worry.',
+                'You are floating on waves of sound.',
+                'The melody wraps around you like a warm blanket.',
+                'Breathe slowly as the music guides your breath.',
+                'Surrender to the soothing composition.',
+                'Let the ambient soundscape dissolve your thoughts.',
+                'You are completely held by this peaceful music.',
+                'Rest in the beauty of pure ambient sound.'
+            ]
+        };
+
+        // ===== EXERCISE INSTRUCTIONS =====
+        const exerciseInstructions = {
+            'breathing-advanced': 'Start with a comfortable seated position. Breathe in slowly for 4 counts, hold for 4 counts, and exhale for 6 counts. Repeat this cycle for 15 minutes. Let your awareness rest fully on the sensation of each breath.',
+            'body-scan': 'Lie down on your back in a comfortable place. Starting from the crown of your head, slowly bring awareness down through your entire body. Notice sensations without trying to change them. This takes about 20 minutes.',
+            'loving-kindness': 'Sit comfortably and bring to mind loved ones. Mentally send them wishes of happiness and peace. Extend this to yourself, then to others, and finally to all beings. Practice for 12 minutes.',
+            'visualization': 'Sit quietly and imagine a place of peace and beauty. Engage all your senses—what do you see, hear, smell, and feel? Rest in this visualization for 18 minutes.',
+            'mindful-walking': 'Walk slowly and deliberately, bringing full awareness to each step. Feel your feet touching the ground. Notice your breath. Let walking become a moving meditation. Practice for 15 minutes.',
+            'sound-meditation': 'An ambient music meditation where calming melodies guide your mind. Close your eyes and let the soothing sounds wash over you, creating a peaceful sanctuary within. The ambient composition will play for 10 minutes, offering a gentle escape from the busy world.'
+        };
+
+        // ===== MOOD SUGGESTIONS =====
+        const moodSuggestions = {
+            sad: {
+                title: 'Ways to Support Your Mood',
+                text: 'You might be feeling a bit down. Here are some gentle ways to care for yourself:',
+                tips: [
+                    'Take a walk in natural sunlight if possible',
+                    'Reach out to a friend or family member',
+                    'Practice a short breathing exercise',
+                    'Engage in an activity you enjoy',
+                    'Be gentle and compassionate with yourself'
+                ]
+            },
+            neutral: {
+                title: 'Continue Your Practice',
+                text: 'You are at ease. Maintain this balance with consistent practice.',
+                tips: [
+                    'Practice mindfulness regularly',
+                    'Notice positive moments throughout your day',
+                    'Build a meditation habit',
+                    'Stay curious about your inner experience',
+                    'Share your practice with others'
+                ]
+            },
+            happy: {
+                title: 'Celebrate Your Peace',
+                text: 'You are feeling wonderful! Here is how to sustain this positive state:',
+                tips: [
+                    'Share your joy with those around you',
+                    'Continue your meditation practice',
+                    'Notice what contributed to this feeling',
+                    'Engage in activities that bring you joy',
+                    'Extend kindness to others'
+                ]
+            }
+        };
+
+        // Show exercise instructions
+        function showExerciseInstructions(exerciseId, title, description) {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.style.zIndex = '1001';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="close-btn" onclick="this.parentElement.parentElement.remove()">×</button>
+                    <div class="modal-header">
+                        <div class="modal-icon" style="background: rgba(168, 213, 168, 0.3); color: #a8d5a8;">📖</div>
+                        <div>
+                            <h2>${title}</h2>
+                            <p>${description}</p>
+                        </div>
+                    </div>
+                    <div style="padding: 2rem; background: rgba(168, 213, 168, 0.05); border-radius: 12px; margin: 2rem 0; line-height: 1.8;">
+                        ${exerciseInstructions[exerciseId]}
+                    </div>
+                    <div style="text-align: center; gap: 1rem; display: flex;">
+                        <button class="timer-btn" onclick="this.parentElement.parentElement.parentElement.remove()">Got it</button>
+                        <button class="timer-btn secondary" onclick="startGuidedMeditation('${exerciseId}')">Start Guided Version</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+        }
+
+        // ===== GUIDED MEDITATION FUNCTION =====
+        let currentScriptIndex = 0;
+        let scriptInterval = null;
+
+        function playGuidedScript() {
+            const container = document.getElementById('guidedScriptContainer');
+            const btn = document.getElementById('scriptPlayBtn');
+            
+            if (scriptInterval) {
+                clearInterval(scriptInterval);
+                scriptInterval = null;
+                btn.textContent = 'Play Guided Meditation';
+                container.innerHTML = '<div class="script-text">Let your breathing become natural and effortless.</div>';
+                return;
+            }
+
+            btn.textContent = 'Playing...';
+            currentScriptIndex = 0;
+            
+            function showNextLine() {
+                const script = meditationScripts['breathing-advanced'];
+                if (currentScriptIndex < script.length) {
+                    const textEl = container.querySelector('.script-text');
+                    if (textEl) {
+                        textEl.textContent = script[currentScriptIndex];
+                        textEl.style.animation = 'none';
+                        setTimeout(() => {
+                            textEl.style.animation = 'fadeInOut 4s ease-in-out';
+                        }, 10);
+                    }
+                    currentScriptIndex++;
+                } else {
+                    clearInterval(scriptInterval);
+                    scriptInterval = null;
+                    btn.textContent = 'Play Guided Meditation';
+                    showPage('journal');
+                }
+            }
+
+            showNextLine();
+            scriptInterval = setInterval(showNextLine, 4000);
+        }
+
+        function startGuidedMeditation(exerciseId) {
+            currentScriptIndex = 0;
+            const script = meditationScripts[exerciseId];
+            const container = document.getElementById('guidedScriptContainer');
+            
+            function showNextLine() {
+                if (currentScriptIndex < script.length) {
+                    const textEl = container.querySelector('.script-text');
+                    if (textEl) {
+                        textEl.textContent = script[currentScriptIndex];
+                        textEl.style.animation = 'none';
+                        setTimeout(() => {
+                            textEl.style.animation = 'fadeInOut 4s ease-in-out';
+                        }, 10);
+                    }
+                    currentScriptIndex++;
+                } else {
+                    clearInterval(scriptInterval);
+                    scriptInterval = null;
+                    setTimeout(() => showPage('journal'), 1000);
+                }
+            }
+
+            showPage('guided-script');
+            showNextLine();
+            scriptInterval = setInterval(showNextLine, 4000);
+        }
+
+        // ===== MOOD SELECTOR =====
+        function updateMood(value) {
+            const slider = parseInt(value);
+            let emoji, moodName;
+            
+            if (slider < 33) {
+                emoji = '😔';
+                moodName = 'Sad';
+            } else if (slider < 66) {
+                emoji = '😐';
+                moodName = 'Neutral';
+            } else {
+                emoji = '😄';
+                moodName = 'Happy';
+            }
+            
+            document.getElementById('moodEmoji').textContent = emoji;
+            document.getElementById('moodText').textContent = moodName;
+            
+            // Show suggestion if mood is sad
+            const suggestion = document.getElementById('moodSuggestion');
+            if (slider < 33) {
+                suggestion.classList.add('show');
+                const suggestionData = moodSuggestions.sad;
+                document.getElementById('suggestionTitle').textContent = suggestionData.title;
+                document.getElementById('suggestionText').textContent = suggestionData.text;
+                const list = document.getElementById('suggestionList');
+                list.innerHTML = suggestionData.tips.map(tip => `<li>${tip}</li>`).join('');
+            } else {
+                suggestion.classList.remove('show');
+            }
+        }
+
+        function saveJournalEntry() {
+            const moodValue = document.getElementById('moodSlider').value;
+            const moodEmoji = document.getElementById('moodEmoji').textContent;
+            const timestamp = new Date().toLocaleString();
+            
+            // Save to localStorage
+            let journalEntries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+            journalEntries.push({
+                timestamp: timestamp,
+                mood: moodValue,
+                emoji: moodEmoji
+            });
+            localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+            
+            alert('Journal entry saved! Your reflection is preserved.');
+            showPage('home');
+        }
+
+        // ===== AUDIO CONTROLS =====
+        let audioContext = null;
+        let currentAudioId = null;
+        const audioGains = {};
+
+        // Web Audio API - Generate ambient sounds
+        function createAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioContext;
+        }
+
+        function generateRainSound() {
+            const ctx = createAudioContext();
+            const duration = 30;
+            const now = ctx.currentTime;
+            
+            // Create white noise for rain
+            const buffer = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < buffer.length; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+            
+            const source = ctx.createBufferSource();
+            source.buffer = buffer;
+            source.loop = true;
+            
+            const gainNode = ctx.createGain();
+            gainNode.gain.value = 0.3;
+            
+            source.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            source.start();
+            
+            return { source, gain: gainNode };
+        }
+
+        function generateWindChimes() {
+            const ctx = createAudioContext();
+            const now = ctx.currentTime;
+            const frequencies = [523.25, 659.25, 783.99, 1046.5]; // C, E, G, C notes
+            
+            function playChime() {
+                const freq = frequencies[Math.floor(Math.random() * frequencies.length)];
+                const osc = ctx.createOscillator();
+                const env = ctx.createGain();
+                
+                osc.frequency.value = freq;
+                env.gain.setValueAtTime(0.1, ctx.currentTime);
+                env.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 2);
+                
+                osc.connect(env);
+                env.connect(ctx.destination);
+                
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 2);
+            }
+            
+            playChime();
+            const interval = setInterval(playChime, Math.random() * 3000 + 2000);
+            return { interval };
+        }
+
+        function generateFireCrackle() {
+            const ctx = createAudioContext();
+            const duration = 30;
+            const buffer = ctx.createBuffer(1, ctx.sampleRate * duration, ctx.sampleRate);
+            const data = buffer.getChannelData(0);
+            
+            // Create crackling effect with filtered noise
+            for (let i = 0; i < buffer.length; i++) {
+                data[i] = (Math.random() * 2 - 1) * Math.sin(i / 1000) * 0.3;
+            }
+            
+            const source = ctx.createBufferSource();
+            source.buffer = buffer;
+            source.loop = true;
+            
+            const gainNode = ctx.createGain();
+            gainNode.gain.value = 0.2;
+            
+            source.connect(gainNode);
+            gainNode.connect(ctx.destination);
+            source.start();
+            
+            return { source, gain: gainNode };
+        }
+
+        function toggleAudio(audioType) {
+            const btn = event.target;
+            const audioControls = document.getElementById('audioControls');
+            
+            if (currentAudioId === audioType) {
+                // Stop current audio
+                if (audioGains[audioType]) {
+                    audioGains[audioType].gain.gain.value = 0;
+                }
+                currentAudioId = null;
+                btn.classList.remove('active');
+                audioControls.style.display = 'none';
+                return;
+            }
+            
+            // Stop previous audio
+            document.querySelectorAll('.audio-btn').forEach(b => b.classList.remove('active'));
+            
+            currentAudioId = audioType;
+            btn.classList.add('active');
+            audioControls.style.display = 'flex';
+            
+            let audio;
+            switch(audioType) {
+                case 'rain':
+                    audio = generateRainSound();
+                    break;
+                case 'windchime':
+                    audio = generateWindChimes();
+                    break;
+                case 'fire':
+                    audio = generateFireCrackle();
+                    break;
+            }
+            
+            audioGains[audioType] = audio.gain || { gain: { value: 0.3 } };
+        }
+
+        function setVolume(value) {
+            document.getElementById('volumeDisplay').textContent = value + '%';
+            if (audioGains[currentAudioId]) {
+                audioGains[currentAudioId].gain.gain.value = (parseInt(value) / 100) * 0.5;
+            }
+        }
+
+        // ===== PROGRESS BAR ANIMATION =====
+        function updateProgressBar(duration) {
+            const progressBar = document.querySelector('.progress-bar');
+            if (progressBar) {
+                progressBar.style.animationDuration = (duration / 1000) + 's';
+            }
+        }
+
+        // Add progress bar to timer
+        const originalStartSession = window.startSession;
+        window.startSession = function(id, title, description, duration, color, icon) {
+            originalStartSession(id, title, description, duration, color, icon);
+            setTimeout(() => {
+                const progressBar = document.querySelector('.progress-bar');
+                if (progressBar) {
+                    progressBar.style.animationDuration = (duration) + 's';
+                }
+            }, 100);
+        };
+
+        // ===== FOCUS MODE & FOCUS TREE =====
+        let focusTimeSeconds = 25 * 60;
+        let focusTimerRunning = false;
+        let focusInterval = null;
+        let focusTimeRemaining = 0;
+
+        const motivationalQuotes = [
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Your time is limited, don't waste it living someone else's life.", author: "Steve Jobs" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            { text: "The only impossible journey is the one you never begin.", author: "Tony Robbins" },
+            { text: "Great things never come from comfort zones.", author: "Unknown" },
+            { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill" },
+            { text: "Your limitation—it's only your imagination.", author: "Unknown" },
+            { text: "Focus on the outcome, not the struggle.", author: "Byron Katie" },
+            { text: "With focus, you can achieve anything.", author: "Unknown" },
+            { text: "The mind is everything. What you think, you become.", author: "Buddha" },
+            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+            { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" }
+        ];
+
+        function showFocusMode() {
+            showPage('focus-mode');
+            setPresetTime(25);
+        }
+
+        function selectTime(event) {
+            const container = event.currentTarget;
+            const rect = container.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const percent = (x / rect.width) * 100;
+            const minutes = Math.max(5, Math.min(50, Math.round((percent / 100) * 45 + 5)));
+            setPresetTime(minutes);
+        }
+
+        function setPresetTime(minutes) {
+            focusTimeSeconds = minutes * 60;
+            focusTimeRemaining = focusTimeSeconds;
+            document.getElementById('focusTimeDisplay').textContent = minutes + ':00';
+            document.getElementById('focusTimerDisplay').textContent = minutes + ':00';
+            
+            const percent = ((minutes - 5) / 45) * 100;
+            document.getElementById('timeBarFill').style.width = percent + '%';
+            
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(minutes + ' min')) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        function startFocusMode() {
+            focusTimeRemaining = focusTimeSeconds;
+            showPage('focus-tree');
+            startFocusTimer();
+        }
+
+        function startFocusTimer() {
+            if (focusTimerRunning) return;
+            focusTimerRunning = true;
+            document.getElementById('focusPauseBtn').textContent = 'Pause';
+            
+            // Trigger tree animation
+            const treeLeaves = document.getElementById('treeLeaves');
+            if (treeLeaves) {
+                treeLeaves.style.animation = 'none';
+                setTimeout(() => {
+                    treeLeaves.style.animation = 'treeGrow 1s ease-out forwards';
+                }, 10);
+            }
+            
+            focusInterval = setInterval(() => {
+                focusTimeRemaining--;
+                updateFocusDisplay();
+                
+                if (focusTimeRemaining <= 0) {
+                    clearInterval(focusInterval);
+                    focusTimerRunning = false;
+                    showFocusComplete();
+                }
+            }, 1000);
+        }
+
+        function toggleFocusTimer() {
+            if (focusTimerRunning) {
+                clearInterval(focusInterval);
+                focusTimerRunning = false;
+                document.getElementById('focusPauseBtn').textContent = 'Resume';
+            } else {
+                startFocusTimer();
+            }
+        }
+
+        function updateFocusDisplay() {
+            const mins = Math.floor(focusTimeRemaining / 60);
+            const secs = focusTimeRemaining % 60;
+            const timeStr = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+            document.getElementById('focusTimerDisplay').textContent = timeStr;
+        }
+
+        function showFocusComplete() {
+            const progress = loadProgress();
+            progress.totalSessions++;
+            progress.totalMinutes += Math.ceil(focusTimeSeconds / 60);
+            saveProgress(progress);
+            
+            alert('🌳 Focus Tree Complete! You focused for ' + Math.ceil(focusTimeSeconds / 60) + ' minutes. Great work!');
+            showPage('home');
+        }
+
+        // ===== MEDITATION ANIMATION =====
+        function showMeditationAnimation() {
+            const quotes = motivationalQuotes;
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('meditationQuote').textContent = '"' + randomQuote.text + '"';
+            document.getElementById('meditationQuoteAuthor').textContent = '— ' + randomQuote.author;
+            showPage('meditation-anim');
+        }
+
+        // ===== HANDWRITING JOURNAL =====
+        function saveJournalEntryV2() {
+            const entry = document.getElementById('journalEntry').value;
+            if (!entry.trim()) {
+                alert('Please write something in your journal!');
+                return;
+            }
+            const title = document.getElementById('journalTitle').value || '';
+            const journalEntries = JSON.parse(localStorage.getItem('journalEntriesV2') || '[]');
+            journalEntries.push({
+                date: new Date().toLocaleDateString(),
+                title: title,
+                entry: entry,
+                timestamp: new Date().getTime()
+            });
+            localStorage.setItem('journalEntriesV2', JSON.stringify(journalEntries));
+
+            document.getElementById('journalEntry').value = '';
+            document.getElementById('journalTitle').value = '';
+            alert('Journal entry saved! Your thoughts are preserved.');
+            renderJournalHistory();
+            showPage('home');
+        }
+
+        function renderJournalHistory() {
+            const listEl = document.getElementById('journalHistoryList');
+            if (!listEl) return;
+            const journalEntries = JSON.parse(localStorage.getItem('journalEntriesV2') || '[]').sort((a,b)=>b.timestamp-a.timestamp);
+            if (journalEntries.length === 0) {
+                listEl.innerHTML = '<div style="color:var(--color-text-light)">No entries yet.</div>';
+                return;
+            }
+            listEl.innerHTML = journalEntries.map(e => {
+                const time = new Date(e.timestamp).toLocaleString();
+                return `<div style="padding:0.6rem;border-bottom:1px dashed var(--color-border);cursor:pointer;" onclick="viewJournalEntry(${e.timestamp})"><strong>${e.title || '(untitled)'}</strong><div style="font-size:0.85rem;color:var(--color-text-light)">${time}</div></div>`;
+            }).join('');
+        }
+
+        function viewJournalEntry(ts) {
+            const journalEntries = JSON.parse(localStorage.getItem('journalEntriesV2') || '[]');
+            const entry = journalEntries.find(e => e.timestamp === ts);
+            if (!entry) return;
+            const preview = document.getElementById('journalPreview');
+            if (!preview) return;
+            preview.innerHTML = `<h4 style="margin-top:0">${entry.title || '(untitled)'}</h4><div style="font-size:0.85rem;color:var(--color-text-light)">${new Date(entry.timestamp).toLocaleString()}</div><hr style="border:none;border-top:1px dashed var(--color-border);margin:0.5rem 0">` +
+                                `<div>${entry.entry.replace(/\n/g,'<br>')}</div>`;
+        }
+
+        // Set journal date
+        function setJournalDate() {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('journalDate').textContent = today.toLocaleDateString('en-US', options);
+        }
+
+        // ===== PROFILE SYSTEM =====
+        let userProfile = {
+            name: 'Meditator',
+            username: 'meditator_' + Math.floor(Math.random() * 10000),
+            avatar: '😊',
+            goals: 'I want to build a consistent meditation practice',
+            level: 1,
+            timeCredits: 0,
+            font: 'default',
+            background: 'default',
+            equippedAccessory: null,
+            equippedBackground: null,
+            chibiData: {
+                face: '😊',
+                skin: '👧',
+                hair: 'Long',
+                accessory: 'none'
+            }
+        };
+
+        let plantAccessories = [];
+        let achievements = [];
+
+        const shopItems = [
+            { id: 1, name: 'Flower Pot', icon: '🪴', price: 50, type: 'pot' },
+            { id: 2, name: 'Pink Ribbon', icon: '🎀', price: 30, type: 'accessory' },
+            { id: 3, name: 'Golden Crown', icon: '👑', price: 100, type: 'accessory' },
+            { id: 4, name: 'Butterfly', icon: '🦋', price: 40, type: 'accessory' },
+            { id: 5, name: 'Sparkles', icon: '✨', price: 25, type: 'effect' },
+            { id: 6, name: 'Raindrops', icon: '💧', price: 35, type: 'effect' },
+            { id: 7, name: 'Mushroom Home', icon: '🍄', price: 60, type: 'accessory' },
+            { id: 8, name: 'Sunshine', icon: '☀️', price: 45, type: 'effect' },
+            // Background & Wardrobe Decor
+            { id: 9, name: 'Night Sky', icon: '🌙', price: 80, type: 'background' },
+            { id: 10, name: 'Cozy Room', icon: '🏠', price: 100, type: 'background' },
+            { id: 11, name: 'Garden', icon: '🌻', price: 90, type: 'background' },
+            { id: 12, name: 'Ocean Breeze', icon: '🌊', price: 95, type: 'background' },
+            { id: 13, name: 'Mountain Peak', icon: '🏔️', price: 110, type: 'background' },
+            { id: 14, name: 'Forest Glade', icon: '🌲', price: 85, type: 'background' },
+            { id: 15, name: 'Sunset Beach', icon: '🏖️', price: 100, type: 'background' },
+            { id: 16, name: 'Starry Night', icon: '⭐', price: 120, type: 'background' }
+        ];
+
+        const achievementsList = [
+            { id: 1, name: 'First Step', icon: '🌱', desc: 'Complete your first session', unlocked: false },
+            { id: 2, name: 'Week Warrior', icon: '⚡', desc: '7-day streak', unlocked: false },
+            { id: 3, name: 'Focus Master', icon: '🎯', desc: 'Complete 10 focus sessions', unlocked: false },
+            { id: 4, name: 'Zen Master', icon: '☮️', desc: 'Complete 50 meditation sessions', unlocked: false },
+            { id: 5, name: 'Tree Grower', icon: '🌳', desc: 'Grow your first tree', unlocked: false },
+            { id: 6, name: 'Journal Keeper', icon: '📓', desc: 'Write 5 journal entries', unlocked: false },
+            { id: 7, name: 'Plant Parent', icon: '🌿', desc: 'Buy 3 plant accessories', unlocked: false },
+            { id: 8, name: 'Hour Master', icon: '⏱️', desc: 'Meditate for 1 hour total', unlocked: false }
+        ];
+
+        function loadProfile() {
+            const saved = localStorage.getItem('userProfile');
+            if (saved) {
+                userProfile = JSON.parse(saved);
+            }
+            updateProfileDisplay();
+        }
+
+        function updateProfileDisplay() {
+            document.getElementById('profileName').value = userProfile.name;
+            document.getElementById('profileUsername').textContent = userProfile.username;
+            document.getElementById('profileAvatar').textContent = userProfile.avatar;
+            document.getElementById('profileGoals').value = userProfile.goals;
+            document.getElementById('timeCreditsDisplay').textContent = userProfile.timeCredits;
+            document.getElementById('shopCreditsDisplay').textContent = userProfile.timeCredits;
+            document.getElementById('profileLevel').textContent = 'Level ' + userProfile.level;
+            document.getElementById('levelBadge').textContent = 'Level ' + userProfile.level;
+            renderPlantAccessories();
+            updatePlantDisplay();
+        }
+
+        function saveProfile() {
+            userProfile.name = document.getElementById('profileName').value || 'Meditator';
+            userProfile.goals = document.getElementById('profileGoals').value;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            alert('Profile saved!');
+            updateProfileDisplay();
+        }
+
+        function selectFont(font, element) {
+            document.querySelectorAll('.customization-grid:nth-of-type(1) .customization-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            userProfile.font = font;
+        }
+
+        // ===== PLANT CARE SYSTEM =====
+        function trackOfflineTime() {
+            const lastVisit = localStorage.getItem('lastVisitTime');
+            const now = Date.now();
+            
+            if (!lastVisit) {
+                localStorage.setItem('lastVisitTime', now);
+                return;
+            }
+            
+            const hoursOffline = Math.floor((now - parseInt(lastVisit)) / (1000 * 60 * 60));
+            localStorage.setItem('lastVisitTime', now);
+            
+            if (hoursOffline >= 1) {
+                // Update plant state
+                let plantState = JSON.parse(localStorage.getItem('plantState')) || { waterLevel: 100, healthLevel: 100, lastWatered: now };
+                plantState.waterLevel = Math.max(0, plantState.waterLevel - (hoursOffline * 5));
+                plantState.healthLevel = Math.max(0, plantState.healthLevel - (hoursOffline * 3));
+                plantState.lastOfflineHours = hoursOffline;
+                localStorage.setItem('plantState', JSON.stringify(plantState));
+                
+                // Trigger notification
+                if (hoursOffline > 0) {
+                    showNotification(`Your plant needs care! It's been ${hoursOffline} hour(s) since you were away. Water it to restore health!`);
+                }
+            }
+        }
+
+        function waterPlant() {
+            let plantState = JSON.parse(localStorage.getItem('plantState')) || { waterLevel: 100, healthLevel: 100 };
+            plantState.waterLevel = Math.min(100, plantState.waterLevel + 30);
+            plantState.healthLevel = Math.min(100, plantState.healthLevel + 10);
+            plantState.lastWatered = Date.now();
+            localStorage.setItem('plantState', JSON.stringify(plantState));
+            
+            showNotification('💧 You watered your plant! It looks healthier now. (+1 Credit)');
+            awardTimeCredits(1);
+            updatePlantDisplay();
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: linear-gradient(135deg, #a8d5a8 0%, #f5c5d0 100%);
+                color: #333;
+                padding: 15px 20px;
+                border-radius: 10px;
+                font-weight: 500;
+                z-index: 9999;
+                max-width: 300px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: slideInUp 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        function updatePlantDisplay() {
+            const plantState = JSON.parse(localStorage.getItem('plantState')) || { waterLevel: 100, healthLevel: 100 };
+            const plantSvg = document.querySelector('.profile-plant-svg');
+            
+            // Apply wilting effect if health is low
+            if (plantSvg && plantState.healthLevel < 50) {
+                plantSvg.style.opacity = 0.7;
+                plantSvg.style.filter = 'saturate(0.6) brightness(0.9)';
+            } else if (plantSvg) {
+                plantSvg.style.opacity = 1;
+                plantSvg.style.filter = 'saturate(1)';
+            }
+            
+            // Update water status display
+            const waterDisplay = document.querySelector('.plant-water-status');
+            if (waterDisplay) {
+                waterDisplay.innerHTML = `💧 Water: ${Math.round(plantState.waterLevel)}% | 💚 Health: ${Math.round(plantState.healthLevel)}%`;
+            }
+        }
+
+        function renderPlantAccessories() {
+            const plantAccessoriesContainer = document.getElementById('plant-accessories-display');
+            if (!plantAccessoriesContainer) return;
+            
+            plantAccessoriesContainer.innerHTML = '';
+            
+            // Position accessories around the plant using absolute positioning
+            const positions = [
+                { x: '10%', y: '15%' },
+                { x: '75%', y: '20%' },
+                { x: '5%', y: '45%' },
+                { x: '80%', y: '50%' },
+                { x: '35%', y: '75%' },
+                { x: '65%', y: '70%' },
+                { x: '45%', y: '10%' }
+            ];
+            
+            plantAccessories.forEach((itemId, index) => {
+                const item = shopItems.find(i => i.id === itemId);
+                if (item && positions[index]) {
+                    const accessoryEl = document.createElement('div');
+                    accessoryEl.className = 'plant-accessory';
+                    accessoryEl.textContent = item.icon;
+                    accessoryEl.style.left = positions[index].x;
+                    accessoryEl.style.top = positions[index].y;
+                    plantAccessoriesContainer.appendChild(accessoryEl);
+                }
+            });
+        }
+
+        function selectBg(bg, element) {
+            document.querySelectorAll('.customization-grid:nth-of-type(2) .customization-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            userProfile.background = bg;
+        }
+
+        // ===== CHIBI AVATAR CREATOR =====
+        let chibiState = {
+            face: '😊',
+            skin: '👧',
+            hair: 'Long',
+            accessory: 'none'
+        };
+
+        function selectChibi(face, element) {
+            chibiState.face = face;
+            document.querySelectorAll('.option-group:nth-child(1) .option-btn').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            updateChibiPreview();
+        }
+
+        function selectChibiSkin(skin, element) {
+            chibiState.skin = skin;
+            document.querySelectorAll('.option-group:nth-child(2) .option-btn').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            updateChibiPreview();
+        }
+
+        function selectChibiHair(hair, element) {
+            chibiState.hair = hair;
+            document.querySelectorAll('.option-group:nth-child(3) .option-btn').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            updateChibiPreview();
+        }
+
+        function selectChibiAccessory(accessory, element) {
+            chibiState.accessory = accessory;
+            document.querySelectorAll('.option-group:nth-child(4) .option-btn').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            updateChibiPreview();
+        }
+
+        function updateChibiPreview() {
+            let preview = chibiState.skin + ' ' + chibiState.face;
+            if (chibiState.accessory !== 'none') {
+                preview = chibiState.accessory + ' ' + preview;
+            }
+            document.getElementById('chibiPreview').textContent = preview;
+        }
+
+        function saveChibi() {
+            userProfile.chibiData = chibiState;
+            userProfile.avatar = chibiState.skin + chibiState.face;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            updateProfileDisplay();
+            showPage('profile');
+        }
+
+        // ===== SHOP SYSTEM =====
+        function initializeShop() {
+            // Render accessories & decor shop
+            const shopGrid = document.getElementById('shopGrid');
+            shopGrid.innerHTML = '';
+            const accessoryItems = shopItems.filter(item => item.type !== 'background');
+            accessoryItems.forEach(item => {
+                const purchased = plantAccessories.includes(item.id);
+                const div = document.createElement('div');
+                div.className = 'shop-item' + (purchased ? ' purchased' : '');
+                div.innerHTML = `
+                    <div class="shop-item-icon">${item.icon}</div>
+                    <div class="shop-item-name">${item.name}</div>
+                    <div class="shop-item-price">⏱️ ${item.price}</div>
+                    ${!purchased ? `<button onclick="buyItem(${item.id}, ${item.price})" style="margin-top: 0.5rem; padding: 0.4rem 0.8rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%;">Buy</button>` : '<div style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--color-primary); font-weight: 600;">Owned ✓</div>'}
+                `;
+                shopGrid.appendChild(div);
+            });
+
+            // Render background decor shop
+            const backgroundGrid = document.getElementById('backgroundShopGrid');
+            backgroundGrid.innerHTML = '';
+            const backgroundItems = shopItems.filter(item => item.type === 'background');
+            backgroundItems.forEach(item => {
+                const purchased = plantAccessories.includes(item.id);
+                const div = document.createElement('div');
+                div.className = 'shop-item' + (purchased ? ' purchased' : '');
+                div.innerHTML = `
+                    <div class="shop-item-icon">${item.icon}</div>
+                    <div class="shop-item-name">${item.name}</div>
+                    <div class="shop-item-price">⏱️ ${item.price}</div>
+                    ${!purchased ? `<button onclick="buyItem(${item.id}, ${item.price})" style="margin-top: 0.5rem; padding: 0.4rem 0.8rem; background: var(--color-primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%;">Buy</button>` : `<button onclick="equipBackground(${item.id})" style="margin-top: 0.5rem; padding: 0.4rem 0.8rem; background: ${userProfile.equippedBackground === item.id ? '#f5c5d0' : 'var(--color-accent-2)'}; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%;">${userProfile.equippedBackground === item.id ? 'Equipped ✓' : 'Equip'}</button>`}
+                `;
+                backgroundGrid.appendChild(div);
+            });
+
+            // Render equipped items
+            renderEquippedItems();
+        }
+
+        function renderEquippedItems() {
+            const display = document.getElementById('equippedItemsDisplay');
+            display.innerHTML = '';
+            
+            // Show equipped accessory
+            if (userProfile.equippedAccessory) {
+                const item = shopItems.find(i => i.id === userProfile.equippedAccessory);
+                if (item) {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'background: var(--color-bg-light); padding: 1rem; border-radius: 12px; text-align: center; border: 2px solid var(--color-primary);';
+                    div.innerHTML = `
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${item.icon}</div>
+                        <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">${item.name} (Accessory)</div>
+                        <button onclick="unequipAccessory()" style="padding: 0.4rem 0.8rem; background: #ff6b6b; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Unequip</button>
+                    `;
+                    display.appendChild(div);
+                }
+            }
+
+            // Show equipped background
+            if (userProfile.equippedBackground) {
+                const item = shopItems.find(i => i.id === userProfile.equippedBackground);
+                if (item) {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'background: var(--color-bg-light); padding: 1rem; border-radius: 12px; text-align: center; border: 2px solid var(--color-accent-2);';
+                    div.innerHTML = `
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">${item.icon}</div>
+                        <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">${item.name} (Background)</div>
+                        <button onclick="unequipBackground()" style="padding: 0.4rem 0.8rem; background: #ff6b6b; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem;">Unequip</button>
+                    `;
+                    display.appendChild(div);
+                }
+            }
+
+            if (!userProfile.equippedAccessory && !userProfile.equippedBackground) {
+                display.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--color-text-light);">No items equipped yet. Purchase and equip items to customize your plant wardrobe!</p>';
+            }
+        }
+
+        function equipBackground(itemId) {
+            userProfile.equippedBackground = itemId;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            initializeShop();
+        }
+
+        function unequipBackground() {
+            userProfile.equippedBackground = null;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            initializeShop();
+        }
+
+        function equipAccessory(itemId) {
+            userProfile.equippedAccessory = itemId;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            initializeShop();
+        }
+
+        function unequipAccessory() {
+            userProfile.equippedAccessory = null;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            initializeShop();
+        }
+
+        // ===== WARDROBE SYSTEM =====
+        function initializeWardrobe() {
+            renderWardrobePreview();
+            renderAccessorySelector();
+            renderBackgroundSelector();
+        }
+
+        function renderWardrobePreview() {
+            const preview = document.getElementById('wardrobePreview');
+            
+            // Get equipped background
+            let backgroundStyle = 'background: linear-gradient(135deg, var(--color-primary), var(--color-accent-2));';
+            let backgroundName = 'Default Garden';
+            
+            if (userProfile.equippedBackground) {
+                const bgItem = shopItems.find(i => i.id === userProfile.equippedBackground);
+                if (bgItem) {
+                    backgroundName = bgItem.name;
+                    // Apply different background styles based on selected item
+                    const bgStyles = {
+                        9: 'background: linear-gradient(180deg, #1a1a2e 0%, #0f3460 50%, #16213e 100%);', // Night Sky
+                        10: 'background: linear-gradient(135deg, #fff5f0 0%, #ffe4d6 100%);', // Cozy Room
+                        11: 'background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);', // Garden
+                        12: 'background: linear-gradient(180deg, #87ceeb 0%, #e0f6ff 100%);', // Ocean Breeze
+                        13: 'background: linear-gradient(180deg, #8b7d9b 0%, #d4a5a5 100%);', // Mountain Peak
+                        14: 'background: linear-gradient(135deg, #38ada9 0%, #078282 100%);', // Forest Glade
+                        15: 'background: linear-gradient(180deg, #ff6b6b 0%, #ffa500 100%);', // Sunset Beach
+                        16: 'background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #4a4a6a 100%);' // Starry Night
+                    };
+                    backgroundStyle = bgStyles[userProfile.equippedBackground] || backgroundStyle;
+                }
+            }
+
+            // Build plant display with accessories
+            let plantDisplay = `<div style="${backgroundStyle} border-radius: 12px; padding: 2rem; min-height: 300px; display: flex; align-items: center; justify-content: center; position: relative;">
+                <div style="font-size: 6rem; position: relative; z-index: 10;">🌿</div>`;
+            
+            if (userProfile.equippedAccessory) {
+                const accessoryItem = shopItems.find(i => i.id === userProfile.equippedAccessory);
+                if (accessoryItem) {
+                    // Position accessories around the plant
+                    plantDisplay += `
+                        <div style="position: absolute; top: 30%; left: 25%; font-size: 2.5rem; animation: plant-sway 3s ease-in-out infinite; transform-origin: center;">${accessoryItem.icon}</div>`;
+                }
+            }
+
+            plantDisplay += `</div>
+            <div style="text-align: center; margin-top: 1.5rem; color: var(--color-text-light);">
+                <p style="margin: 0.5rem 0;"><strong>${backgroundName}</strong></p>
+                ${userProfile.equippedAccessory ? `<p style="margin: 0.5rem 0;">With ${shopItems.find(i => i.id === userProfile.equippedAccessory)?.name}</p>` : '<p style="margin: 0.5rem 0;">No accessory equipped</p>'}
+            </div>`;
+
+            preview.innerHTML = plantDisplay;
+        }
+
+        function renderAccessorySelector() {
+            const list = document.getElementById('accessorySelectList');
+            list.innerHTML = '';
+
+            // Add "None" option
+            const noneBtn = document.createElement('button');
+            noneBtn.style.cssText = 'padding: 0.75rem; border: 2px solid ' + (userProfile.equippedAccessory === null ? 'var(--color-primary)' : 'var(--color-border)') + '; background: var(--color-bg-light); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s;';
+            noneBtn.textContent = 'None';
+            noneBtn.onclick = () => {
+                userProfile.equippedAccessory = null;
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                initializeWardrobe();
+            };
+            list.appendChild(noneBtn);
+
+            // Filter owned accessories
+            const ownedAccessories = plantAccessories
+                .map(id => shopItems.find(i => i.id === id && i.type !== 'background'))
+                .filter(item => item);
+
+            ownedAccessories.forEach(item => {
+                const btn = document.createElement('button');
+                const isEquipped = userProfile.equippedAccessory === item.id;
+                btn.style.cssText = `padding: 0.75rem; border: 2px solid ${isEquipped ? 'var(--color-primary)' : 'var(--color-border)'}; background: var(--color-bg-light); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s;`;
+                btn.innerHTML = `<span style="font-size: 1.5rem; margin-right: 0.5rem;">${item.icon}</span>${item.name}${isEquipped ? ' ✓' : ''}`;
+                btn.onclick = () => {
+                    userProfile.equippedAccessory = item.id;
+                    localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                    initializeWardrobe();
+                };
+                list.appendChild(btn);
+            });
+
+            if (ownedAccessories.length === 0) {
+                const msg = document.createElement('div');
+                msg.style.color = 'var(--color-text-light)';
+                msg.textContent = 'No accessories purchased yet';
+                list.appendChild(msg);
+            }
+        }
+
+        function renderBackgroundSelector() {
+            const list = document.getElementById('backgroundSelectList');
+            list.innerHTML = '';
+
+            // Add "Default" option
+            const defaultBtn = document.createElement('button');
+            defaultBtn.style.cssText = 'padding: 0.75rem; border: 2px solid ' + (userProfile.equippedBackground === null ? 'var(--color-accent-2)' : 'var(--color-border)') + '; background: var(--color-bg-light); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s;';
+            defaultBtn.textContent = 'Default Garden';
+            defaultBtn.onclick = () => {
+                userProfile.equippedBackground = null;
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                initializeWardrobe();
+            };
+            list.appendChild(defaultBtn);
+
+            // Filter owned backgrounds
+            const ownedBackgrounds = plantAccessories
+                .map(id => shopItems.find(i => i.id === id && i.type === 'background'))
+                .filter(item => item);
+
+            ownedBackgrounds.forEach(item => {
+                const btn = document.createElement('button');
+                const isEquipped = userProfile.equippedBackground === item.id;
+                btn.style.cssText = `padding: 0.75rem; border: 2px solid ${isEquipped ? 'var(--color-accent-2)' : 'var(--color-border)'}; background: var(--color-bg-light); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s;`;
+                btn.innerHTML = `<span style="font-size: 1.5rem; margin-right: 0.5rem;">${item.icon}</span>${item.name}${isEquipped ? ' ✓' : ''}`;
+                btn.onclick = () => {
+                    userProfile.equippedBackground = item.id;
+                    localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                    initializeWardrobe();
+                };
+                list.appendChild(btn);
+            });
+
+            if (ownedBackgrounds.length === 0) {
+                const msg = document.createElement('div');
+                msg.style.color = 'var(--color-text-light)';
+                msg.textContent = 'No backgrounds purchased yet';
+                list.appendChild(msg);
+            }
+        }
+
+        function buyItem(itemId, price) {
+            if (userProfile.timeCredits >= price) {
+                userProfile.timeCredits -= price;
+                plantAccessories.push(itemId);
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                localStorage.setItem('plantAccessories', JSON.stringify(plantAccessories));
+                updateProfileDisplay();
+                initializeShop();
+                addSparkle();
+            } else {
+                alert('Not enough time credits! Complete more sessions to earn credits.');
+            }
+        }
+
+        function addSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.textContent = '✨';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 1500);
+        }
+
+        // ===== ACHIEVEMENTS SYSTEM =====
+        function initializeAchievements() {
+            const badgeGrid = document.getElementById('badgeGrid');
+            if (!badgeGrid) return;
+            badgeGrid.innerHTML = '';
+            achievementsList.forEach(achievement => {
+                const div = document.createElement('div');
+                div.className = 'badge' + (!achievement.unlocked ? ' locked' : '');
+                div.innerHTML = `
+                    <div class="badge-icon">${achievement.icon}</div>
+                    <div class="badge-name">${achievement.name}</div>
+                    <div class="badge-desc">${achievement.desc}</div>
+                `;
+                badgeGrid.appendChild(div);
+            });
+        }
+
+        function unlockAchievement(achievementId) {
+            const achievement = achievementsList.find(a => a.id === achievementId);
+            if (achievement && !achievement.unlocked) {
+                achievement.unlocked = true;
+                userProfile.timeCredits += 10; // Bonus credits for unlocking
+                updateProfileDisplay();
+                addSparkle();
+            }
+        }
+
+        // Add credits when session completes
+        function awardTimeCredits(credits) {
+            userProfile.timeCredits += credits;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            updateProfileDisplay();
+        }
+
+        // ===== FRIENDS & SHARED PLANTS (local simulation) =====
+        let friends = [];
+
+        function loadFriends() {
+            const saved = localStorage.getItem('friends');
+            if (saved) friends = JSON.parse(saved);
+            renderFriends();
+            renderSharedPlants();
+        }
+
+        function selectPlant(choice) {
+            userProfile.plantChoice = choice;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            showNotification('You chose ' + choice + ' as your plant!');
+            showPage('profile');
+            updateProfileDisplay();
+        }
+
+        function skipChoosePlant() {
+            if (!userProfile.plantChoice) {
+                userProfile.plantChoice = 'sprout';
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            }
+            showPage('home');
+        }
+
+        function saveFriends() {
+            localStorage.setItem('friends', JSON.stringify(friends));
+        }
+
+        let friendRequests = [];
+        let messages = {};
+        let selectedFriendChat = null;
+
+        function loadFriendRequests() {
+            const saved = localStorage.getItem('friendRequests');
+            if (saved) friendRequests = JSON.parse(saved);
+        }
+
+        function loadMessages() {
+            const saved = localStorage.getItem('friendMessages');
+            if (saved) messages = JSON.parse(saved);
+        }
+
+        function searchUsers() {
+            const query = document.getElementById('friendSearch').value.trim().toLowerCase();
+            const results = document.getElementById('searchResults');
+            if (!query) { results.innerHTML = ''; return; }
+            // Simulate user search (in a real app, this would query a backend)
+            const mockUsers = ['alice123', 'bob_wellness', 'charlie_zen', 'diana_calm', 'emma_peace'];
+            const matches = mockUsers.filter(u => u.includes(query) && !friends.includes(u));
+            results.innerHTML = matches.map(u => `<div style="padding:0.5rem;border:1px solid var(--color-border);margin:0.3rem 0;border-radius:6px;display:flex;justify-content:space-between;"><span>@${u}</span><button class='timer-btn' onclick="sendFriendRequest('${u}')" style="padding:0.4rem 0.8rem;font-size:0.85rem;">Send Request</button></div>`).join('');
+        }
+
+        function sendFriendRequest(username) {
+            if (!friendRequests.includes(username)) {
+                friendRequests.push(username);
+                localStorage.setItem('friendRequests', JSON.stringify(friendRequests));
+                showNotification(`Friend request sent to @${username}!`);
+                renderFriendRequests();
+            }
+        }
+
+        function renderFriendRequests() {
+            const list = document.getElementById('friendRequestsList');
+            if (!list || friendRequests.length === 0) { if (list) list.innerHTML = '<div style="color:var(--color-text-light);">No pending requests.</div>'; return; }
+            list.innerHTML = friendRequests.map(u => `<div style="padding:0.6rem;border:1px solid var(--color-border);margin:0.5rem 0;border-radius:8px;display:flex;justify-content:space-between;"><div><strong>@${u}</strong><div style="font-size:0.85rem;color:var(--color-text-light)">Pending</div></div><div style="display:flex;gap:0.3rem;"><button class='timer-btn' onclick="acceptFriendRequest('${u}')" style="padding:0.4rem;font-size:0.8rem;">Accept</button><button class='timer-btn secondary' onclick="declineFriendRequest('${u}')" style="padding:0.4rem;font-size:0.8rem;">Decline</button></div></div>`).join('');
+        }
+
+        function acceptFriendRequest(username) {
+            friends.push(username);
+            saveFriends();
+            friendRequests = friendRequests.filter(u => u !== username);
+            localStorage.setItem('friendRequests', JSON.stringify(friendRequests));
+            showNotification(`You're now friends with @${username}!`);
+            renderFriends();
+            renderFriendRequests();
+            renderSharedPlants();
+            if (!messages[username]) messages[username] = [];
+            localStorage.setItem('friendMessages', JSON.stringify(messages));
+        }
+
+        function declineFriendRequest(username) {
+            friendRequests = friendRequests.filter(u => u !== username);
+            localStorage.setItem('friendRequests', JSON.stringify(friendRequests));
+            showNotification(`Declined friend request from @${username}.`);
+            renderFriendRequests();
+        }
+
+        function addFriend() {
+            const input = document.getElementById('friendUsername');
+            if (!input) return;
+            const name = input.value.trim();
+            if (!name) { showNotification('Enter a username to add.'); return; }
+            sendFriendRequest(name);
+            input.value = '';
+        }
+
+        function renderFriends() {
+            const list = document.getElementById('friendsList');
+            if (!list) return;
+            list.innerHTML = '';
+            friends.forEach(name => {
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.justifyContent = 'space-between';
+                row.style.alignItems = 'center';
+                row.style.padding = '0.6rem';
+                row.style.border = '1px solid var(--color-border)';
+                row.style.borderRadius = '8px';
+                row.style.cursor = 'pointer';
+                row.onclick = () => selectFriendChat(name);
+                row.innerHTML = `<div><strong>@${name}</strong></div><div style="display:flex;gap:0.5rem"><button class='timer-btn' onclick="selectFriendChat('${name}')" style="padding:0.3rem 0.6rem;font-size:0.8rem;">Chat</button><button class='timer-btn secondary' onclick="removeFriend('${name}')" style="padding:0.3rem 0.6rem;font-size:0.8rem;">Remove</button></div>`;
+                list.appendChild(row);
+            });
+        }
+
+        function selectFriendChat(name) {
+            selectedFriendChat = name;
+            const panel = document.getElementById('friendMessagesPanel');
+            if (!panel) return;
+            if (!messages[name]) messages[name] = [];
+            panel.innerHTML = `<div style="padding:0.4rem;font-weight:700;">💬 Chat with @${name}</div><hr>` + messages[name].map((m,i)=>`<div style="padding:0.4rem;margin:0.3rem 0;background:${m.from === userProfile.username ? '#e8f5e9' : '#fff3e0'};border-radius:4px;"><strong>${m.from}</strong>: ${m.text}<div style="font-size:0.75rem;color:var(--color-text-light)">${new Date(m.time).toLocaleTimeString()}</div></div>`).join('');
+        }
+
+        function sendMessageToSelected() {
+            if (!selectedFriendChat) { alert('Select a friend to chat with.'); return; }
+            const input = document.getElementById('messageInput');
+            if (!input || !input.value.trim()) return;
+            const text = input.value.trim();
+            if (!messages[selectedFriendChat]) messages[selectedFriendChat] = [];
+            messages[selectedFriendChat].push({ from: userProfile.username, text, time: Date.now() });
+            localStorage.setItem('friendMessages', JSON.stringify(messages));
+            input.value = '';
+            selectFriendChat(selectedFriendChat);
+        }
+
+        function removeFriend(name) {
+            if (confirm(`Remove @${name} as a friend?`)) {
+                friends = friends.filter(f => f !== name);
+                saveFriends();
+                renderFriends();
+                renderSharedPlants();
+                showNotification(`@${name} removed.`);
+            }
+        }
+
+        function renderSharedPlants() {
+            const container = document.getElementById('sharedPlantsList');
+            if (!container) return;
+            container.innerHTML = '';
+            friends.forEach(name => {
+                const key = 'sharedPlant_' + name;
+                const plantState = JSON.parse(localStorage.getItem(key)) || { waterLevel: 80, healthLevel: 80, owners: [userProfile.username] };
+                const card = document.createElement('div');
+                card.style.border = '1px solid var(--color-border)';
+                card.style.padding = '0.8rem';
+                card.style.borderRadius = '8px';
+                card.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>@${name}'s Plant</strong><div style="font-size:0.9rem;color:var(--color-text-light)">💧 ${Math.round(plantState.waterLevel)}% | 💚 ${Math.round(plantState.healthLevel)}%</div></div><div style="display:flex;flex-direction:column;gap:0.5rem"><button class='timer-btn' onclick="waterSharedPlant('${name}')" style="padding:0.4rem;font-size:0.85rem;">💧 Water (5 Credits)</button><button class='timer-btn secondary' onclick="sendGift('${name}')" style="padding:0.4rem;font-size:0.85rem;">🎁 Send Gift</button></div></div>`;
+                container.appendChild(card);
+            });
+        }
+
+        function waterSharedPlant(name) {
+            const cost = 5;
+            if (userProfile.timeCredits < cost) { alert('Not enough credits to water this plant!'); return; }
+            const key = 'sharedPlant_' + name;
+            const plantState = JSON.parse(localStorage.getItem(key)) || { waterLevel: 80, healthLevel: 80 };
+            plantState.waterLevel = Math.min(100, plantState.waterLevel + 20);
+            plantState.healthLevel = Math.min(100, plantState.healthLevel + 10);
+            localStorage.setItem(key, JSON.stringify(plantState));
+            userProfile.timeCredits -= cost;
+            localStorage.setItem('userProfile', JSON.stringify(userProfile));
+            showNotification(`You watered @${name}'s plant! (-${cost} credits)`);
+            updateProfileDisplay();
+            renderSharedPlants();
+        }
+
+        function sendGift(name) {
+            showNotification(`Gift feature coming soon! You can send accessories to @${name}.`);
+        }
+
+        function viewFriendPlant(name) {
+            // For now, open the friends page and scroll to the friend's plant
+            showPage('friends');
+            setTimeout(() => {
+                const container = document.getElementById('sharedPlantsList');
+                if (!container) return;
+                const items = Array.from(container.children);
+                const idx = friends.indexOf(name);
+                if (idx >= 0 && items[idx]) {
+                    items[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    items[idx].style.boxShadow = '0 6px 18px rgba(0,0,0,0.12)';
+                    setTimeout(() => items[idx].style.boxShadow = '', 1500);
+                }
+            }, 300);
+        }
+
+        // Load data on startup
+        function initializeAllSystems() {
+            loadProfile();
+            const saved = localStorage.getItem('plantAccessories');
+            if (saved) {
+                plantAccessories = JSON.parse(saved);
+            }
+            initializeShop();
+            initializeWardrobe();
+            initializeAchievements();
+            loadFriends();
+            loadFriendRequests();
+            loadMessages();
+            renderJournalHistory();
+            renderFriendRequests();
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            trackOfflineTime();
+            initializeQuote();
+            loadProgress();
+            setJournalDate();
+            initializeAllSystems();
+        });
+    </script>
+</body>
+</html>
